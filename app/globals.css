@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ink: #0B0F14;
+  --ink-elevated: #141A22;
+  --paper: #F6F1E8;
+  --paper-muted: #C9C2B6;
+  --amber: #F5A524;
+  --amber-hover: #FFB84D;
+  --signal: #2DD4A8;
+  --danger: #E85D4C;
+  --line: #243041;
+  --mono-muted: #8B95A5;
+  --radius-card: 10px;
+  --radius-pill: 999px;
+  --radius-input: 6px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
