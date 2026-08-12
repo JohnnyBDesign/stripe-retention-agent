@@ -22,7 +22,7 @@ export default function FinalCta() {
               href="#pricing"
               className="w-full sm:w-auto px-8 py-3 border border-afterwhy-line hover:border-afterwhy-paper text-afterwhy-paper text-base font-medium rounded-pill transition-colors"
             >
-              Join as a design partner
+              Apply for founding — 50% off 90 days after first successful enroll
             </Link>
           </div>
         </div>
