@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StripeEvent {
+  id             String   @id @default(cuid())
+  stripeEventId  String   @unique
+  type           String
+  payload        Json
+  processed      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  
+  @@index([stripeEventId])
+  @@index([type])
+  @@index([processed])
+}
+
+model CustomerActivity {
+  id                String   @id @default(cuid())
+  customerId        String
+  lastActiveAt      DateTime?
+  activationAt      DateTime?
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([customerId])
+  @@index([customerId])
+}
+
+model RetentionCase {
+  id                  String   @id @default(cuid())
+  customerId          String
+  customerEmail       String
+  subscriptionId      String?
+  plan                String
+  mrr                 Float
+  tenureDays          Int
+  reason              String
+  confidence          Float
+  evidence            Json
+  recommendedSequence String?
+  subjectDraft        String
+  bodyDraft           String
+  state               String   @default("pending")
+  overrideReason      String?
+  reviewedAt          DateTime?
+  reviewedBy          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  @@index([customerId])
+  @@index([state])
+  @@index([reason])
+  @@index([createdAt])
+}
+
+model ResendEnrollment {
+  id         String   @id @default(cuid())
+  caseId     String   @unique
+  contactId  String?
+  tags       String[]
+  enrolledAt DateTime @default(now())
+  
+  case       RetentionCase @relation(fields: [caseId], references: [id])
+  
+  @@index([caseId])
+}
