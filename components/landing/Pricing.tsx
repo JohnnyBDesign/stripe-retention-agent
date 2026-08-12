@@ -54,10 +54,10 @@ export default function Pricing() {
             </ul>
             <div className="space-y-3">
               <Link
-                href="/queue"
+                href="#pricing"
                 className="block text-center px-6 py-3 bg-lime hover:bg-lime/90 text-void rounded-2xl font-semibold transition-colors"
               >
-                Connect Stripe → get your first HITL card
+                Start with Stripe keys → get your first HITL card
               </Link>
               <Link
                 href="#pricing"
@@ -103,7 +103,7 @@ export default function Pricing() {
                 <span className="text-cyan font-bold text-lg">
                   ✓
                 </span>
-                <span className="text-mute">Priority SLA</span>
+                <span className="text-mute">Priority support</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-cyan font-bold text-lg">
@@ -116,10 +116,10 @@ export default function Pricing() {
             </ul>
             <div className="space-y-3">
               <Link
-                href="/queue"
+                href="#pricing"
                 className="block text-center px-6 py-3 bg-lime hover:bg-lime/90 text-void rounded-2xl font-semibold transition-colors"
               >
-                Connect Stripe → get your first HITL card
+                Start with Stripe keys → get your first HITL card
               </Link>
               <Link
                 href="#pricing"
