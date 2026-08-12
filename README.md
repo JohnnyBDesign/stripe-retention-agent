@@ -7,7 +7,7 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 - **Stripe Webhook Ingestion**: Signed webhooks with idempotent event storage
 - **Churn Classification**: Heuristic v0 classifier with 7 reason types + payment_failed stub
 - **HITL Queue**: Human-in-the-loop approval queue with minimal UI
-- **Resend Integration**: Automatic enrollment via reason-specific tags
+- **Resend Integration**: Automatic enrollment via reason-specific segments
 - **Silent Rescue**: Detects inactive users before renewal
 - **Never-Activated Detection**: Identifies users who never engaged but keep paying
 
@@ -32,11 +32,11 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 │   Stripe    │─────▶│   Webhooks   │─────▶│ Classifier │
 │  Webhooks   │      │  + Idempotent│      │ (Heuristic)│
 └─────────────┘      └──────────────┘      └────────────┘
-                                                    │
-                                                    ▼
+                                                   │
+                                                   ▼
 ┌─────────────┐      ┌──────────────┐      ┌────────────┐
 │   Resend    │◀─────│     HITL     │◀─────│  Database  │
-│   (Tags)    │      │  Approval UI │      │ (Postgres) │
+│  (Segments) │      │  Approval UI │      │ (Postgres) │
 └─────────────┘      └──────────────┘      └────────────┘
 ```
 
@@ -46,7 +46,7 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 - Node.js 20+
 - PostgreSQL 15+
 - Stripe account with test mode
-- Resend account with audience created
+- Resend account
 
 ### Installation
 
@@ -70,7 +70,6 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 
    # Resend
    RESEND_API_KEY=re_...
-   RESEND_AUDIENCE_ID=aud_...
 
    # Database
    DATABASE_URL=postgresql://user:password@localhost:5432/retention_agent
@@ -134,7 +133,7 @@ Configure these events in your Stripe Dashboard or CLI:
    - Approve or reject
 7. **Resend Enrollment** - On approval:
    - Contact created/updated in Resend
-   - Tagged with reason (e.g., `ret_price`)
+   - Added to segment by reason (e.g., `ret_price`)
    - Ready for ESP campaign automation
 
 ### API Endpoints
@@ -313,9 +312,9 @@ npm run lint
 └── tests/                  # Vitest tests
 ```
 
-## Resend Tag Convention
+## Resend Segment Convention
 
-Contacts are enrolled in Resend on approval. Tag mappings (for manual configuration):
+Contacts are enrolled in Resend segments on approval. The system automatically creates and manages these segments:
 - `ret_price`
 - `ret_bug`
 - `ret_missing_feature`
@@ -325,9 +324,12 @@ Contacts are enrolled in Resend on approval. Tag mappings (for manual configurat
 - `ret_payment_failed`
 - `ret_other`
 
-**Note**: The Resend API creates contacts but doesn't support programmatic tagging via the current SDK. Configure tags in Resend Dashboard automation rules or use the tag mapping above for custom integrations.
+**How it works**: When a retention case is approved, the system:
+1. Creates the contact in Resend (if not already exists)
+2. Ensures the segment exists (creates if missing, cached in memory)
+3. Adds the contact to the appropriate segment
 
-Configure email sequences in Resend Dashboard triggered by contact creation or external automation.
+Configure email sequences in Resend Dashboard to trigger when contacts are added to these segments.
 
 ## Roadmap (v1+)
 
