@@ -1,29 +1,24 @@
-export default function WhyUs() {
-  const points = [
-    'Cancel flows save the click. We save the customer after we know why they left—or went quiet.',
-    'Stripe-native reason brain → Resend segments (ret_price, ret_bug, …). Your ESP. Your brand. Human approval.',
-    'Not another cancel modal. Classifies price, bugs, competitors, never-activated, and silent renewers—then enrolls the playbook.',
-    'Bring your own Resend (then Customer.io / Loops). We don\'t hijack deliverability to rent you six engines.',
-    'HITL by design: the agent drafts the retention move; you ship it. Autopilot is how brands get weird.',
-  ];
+import Image from 'next/image';
 
+export default function WhyUs() {
   return (
-    <section className="border-y border-afterwhy-line bg-afterwhy-elevated">
-      <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-        <h2 className="text-3xl font-bold text-afterwhy-paper mb-16 text-center">
-          Why us
-        </h2>
-        <div className="space-y-8 max-w-3xl mx-auto">
-          {points.map((point, i) => (
-            <div key={i} className="flex gap-6 items-start">
-              <div className="flex-shrink-0 font-mono text-sm font-bold text-afterwhy-amber">
-                {String(i + 1).padStart(2, '0')}
-              </div>
-              <p className="text-afterwhy-muted text-base leading-[1.55] pt-0.5">
-                {point}
-              </p>
-            </div>
-          ))}
+    <section className="relative py-20 px-6 md:px-8">
+      <div className="mx-auto max-w-content">
+        <div className="bg-charcoal rounded-4xl p-12 md:p-16 border border-line relative overflow-hidden">
+          <div className="relative z-10 max-w-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Approve every enroll like a teammate.
+            </h2>
+            <p className="text-xl text-gray leading-relaxed">
+              Signal classifies the reason, drafts the save email, and waits for your approval 
+              before enrolling the customer in your Resend playbook. No auto-sends.
+            </p>
+          </div>
+          
+          {/* Peeking face */}
+          <div className="absolute -right-12 -bottom-12 opacity-20">
+            <Image src="/face.svg" alt="" width={300} height={300} />
+          </div>
         </div>
       </div>
     </section>

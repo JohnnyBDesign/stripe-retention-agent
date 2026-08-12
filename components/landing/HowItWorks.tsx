@@ -1,52 +1,48 @@
 export default function HowItWorks() {
   const steps = [
     {
-      number: 'STEP 1',
+      number: '1',
       title: 'Stripe fires',
-      description:
-        'Cancel with reason text, refund, or silent/never-activated signal.',
+      description: 'Customer.subscription.updated or customer.subscription.deleted webhook hits Signal',
     },
     {
-      number: 'STEP 2',
+      number: '2',
       title: 'We classify',
-      description:
-        'price · bug · missing_feature · competitor · never_activated · silent_rescue · other.',
+      description: 'LLM + context classifies as ret_price, ret_bugs, ret_competitor, ret_never_activated, or silent_rescue',
     },
     {
-      number: 'STEP 3',
+      number: '3',
       title: 'You approve',
-      description:
-        'Draft + recommended Resend segment. SLA: 4h cancel-path / 1 business day silent.',
+      description: 'Draft appears in your HITL queue with reason, playbook, and suggested Resend segment',
     },
     {
-      number: 'STEP 4',
+      number: '4',
       title: 'Resend enrolls',
-      description:
-        'Contact joins matching ret_* segment; your sequence runs.',
+      description: 'After approval, customer is enrolled in the playbook via Resend API (segments, not tags)',
     },
   ];
 
   return (
-    <section id="how" className="scroll-mt-16">
-      <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-        <h2 className="text-3xl font-bold text-afterwhy-paper mb-12 text-center">
-          How it works
-        </h2>
-        <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="border border-afterwhy-line rounded-card p-6 hover:border-afterwhy-amber transition-colors bg-afterwhy-elevated"
+    <section className="relative py-20 px-6 md:px-8" id="how">
+      <div className="mx-auto max-w-content">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            How it works
+          </h2>
+          <p className="text-xl text-gray">Four steps from churn to playbook enrollment</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {steps.map((step) => (
+            <div 
+              key={step.number}
+              className="bg-charcoal rounded-3xl p-8 border border-line hover:border-gray-dim transition"
             >
-              <div className="text-xs font-bold text-afterwhy-mono tracking-wider mb-2">
+              <div className="w-12 h-12 rounded-pill bg-white text-black font-bold text-xl flex items-center justify-center mb-4">
                 {step.number}
               </div>
-              <h3 className="text-xl font-semibold text-afterwhy-paper mb-3">
-                {step.title}
-              </h3>
-              <p className="text-afterwhy-muted text-base leading-[1.55]">
-                {step.description}
-              </p>
+              <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
+              <p className="text-gray leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>

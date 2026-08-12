@@ -2,27 +2,29 @@ import Link from 'next/link';
 
 export default function FinalCta() {
   return (
-    <section className="border-y border-afterwhy-line bg-afterwhy-elevated">
-      <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-afterwhy-paper mb-6">
-            Ready to save churned customers?
+    <section className="relative py-20 px-6 md:px-8" id="founding">
+      <div className="mx-auto max-w-content">
+        <div className="bg-charcoal rounded-4xl p-12 md:p-16 border border-line text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Get your first HITL card this week
           </h2>
-          <p className="text-lg text-afterwhy-muted mb-10 leading-[1.55]">
-            Get 50% off for 90 days after your first successful enroll.
+          <p className="text-xl text-gray mb-8 max-w-2xl mx-auto">
+            Connect your Stripe account, map one webhook, and see your first classified 
+            churn reason by Friday. Week 1 average: too_expensive → ret_price.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link 
               href="#pricing"
-              className="w-full sm:w-auto px-8 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-base font-semibold rounded-pill transition-colors"
+              className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
             >
               Start with Stripe keys → get your first HITL card
             </Link>
-            <Link
-              href="#pricing"
-              className="w-full sm:w-auto px-8 py-3 border border-afterwhy-line hover:border-afterwhy-paper text-afterwhy-paper text-base font-medium rounded-pill transition-colors"
+            <Link 
+              href="/queue"
+              className="px-8 py-4 bg-charcoal text-white text-base font-medium rounded-pill hover:bg-panel transition border border-line"
             >
-              Apply for founding — 50% off 90 days after first successful enroll
+              Open HITL queue
             </Link>
           </div>
         </div>

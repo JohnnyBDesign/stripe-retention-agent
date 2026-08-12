@@ -1,37 +1,48 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-afterwhy-elevated/30 to-transparent" />
-      <div className="relative max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-        <div className="max-w-hero mx-auto text-center">
-          <h1 className="font-display text-hero font-bold text-afterwhy-paper mb-6">
-            Stripe churn, classified and saved.
+    <section className="relative pt-32 pb-20 px-6 md:px-8">
+      <div className="mx-auto max-w-content">
+        <div className="max-w-3xl mx-auto text-center">
+          {/* Chip */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-charcoal text-gray-dim text-xs font-medium mb-8">
+            EARLY ACCESS · Stripe → HITL → Resend
+          </div>
+
+          {/* H1 with inline face */}
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 flex items-center justify-center gap-4 flex-wrap">
+            Meet 
+            <Image src="/face.svg" alt="" width={80} height={80} className="inline-block" />
+            Signal
           </h1>
-          <p className="text-lg leading-[1.55] text-afterwhy-muted mb-10 max-w-xl mx-auto">
-            Not another cancel modal. A churn agent that classifies price, bugs,
-            competitors, never-activated, and silent renewers—then enrolls the
-            playbook in YOUR Resend. Human approves every draft.
+
+          {/* Subhead */}
+          <p className="text-xl md:text-2xl text-gray leading-relaxed mb-10 max-w-2xl mx-auto">
+            A churn agent that classifies cancel reasons and silent renewers, drafts the save, 
+            and enrolls the playbook in your Resend — after you approve.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
+
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <Link 
               href="#pricing"
-              className="w-full sm:w-auto px-8 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-base font-semibold rounded-pill transition-colors"
+              className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
             >
               Start with Stripe keys → get your first HITL card
             </Link>
-            <Link
-              href="#pricing"
-              className="w-full sm:w-auto px-8 py-3 border border-afterwhy-line hover:border-afterwhy-paper text-afterwhy-paper text-base font-medium rounded-pill transition-colors"
+            <Link 
+              href="#founding"
+              className="px-8 py-4 bg-charcoal text-white text-base font-medium rounded-pill hover:bg-panel transition"
             >
               Apply for founding — 50% off 90 days after first successful enroll
             </Link>
           </div>
-          <p className="text-sm text-afterwhy-mono leading-relaxed max-w-2xl mx-auto mt-8">
-            Human in the loop. 4h cancel-path SLA · 1d silent. Resend segments
-            first; Customer.io & Loops next. No cancel-button widget. No emails
-            from our domain.
+
+          {/* Trust line */}
+          <p className="text-sm text-gray-dim">
+            Human-in-the-loop · Resend segments · No cancel widget
           </p>
         </div>
       </div>

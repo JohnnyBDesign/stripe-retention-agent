@@ -1,65 +1,32 @@
-'use client';
-
-import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Nav() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <nav
-      className={`sticky top-0 z-50 transition-all ${
-        isScrolled
-          ? 'bg-afterwhy-elevated/95 backdrop-blur-sm border-b border-afterwhy-line'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-3 group">
-            <Image
-              src="/mark.svg"
-              alt="AfterWhy"
-              width={24}
-              height={24}
-              className="transition-transform group-hover:scale-105"
-            />
-            <span className="font-display text-lg text-afterwhy-paper">
-              AfterWhy
-            </span>
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-black/80 backdrop-blur-sm">
+      <div className="mx-auto max-w-content px-6 md:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/face.svg" alt="Signal" width={32} height={32} />
+            <span className="text-lg font-semibold text-white">Signal</span>
           </Link>
-
-          <div className="flex items-center gap-8">
-            <Link
-              href="#how"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
-            >
-              How it works
+          
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="#product" className="text-sm text-gray-dim hover:text-white transition">
+              Product
             </Link>
-            <Link
-              href="#compare"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
-            >
-              vs SaveMRR
+            <Link href="#how" className="text-sm text-gray-dim hover:text-white transition">
+              How
             </Link>
-            <Link
-              href="#pricing"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
-            >
+            <Link href="#pricing" className="text-sm text-gray-dim hover:text-white transition">
               Pricing
             </Link>
-            <Link
+            <Link href="/contact" className="text-sm text-gray-dim hover:text-white transition">
+              Contact
+            </Link>
+            <Link 
               href="#pricing"
-              className="px-4 py-2 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-sm font-semibold rounded-pill transition-colors"
+              className="px-5 py-2.5 bg-white text-black text-sm font-medium rounded-pill hover:bg-white/90 transition"
             >
               Start with Stripe keys
             </Link>

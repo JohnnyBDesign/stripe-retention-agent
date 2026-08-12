@@ -1,19 +1,19 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-space-grotesk',
+  variable: '--font-inter',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'Retention — Stripe churn, classified and saved',
-  description: 'A churn agent that classifies price, bugs, competitors, never-activated, and silent renewers—then enrolls the playbook in YOUR Resend. Human approves every draft.',
+  title: 'Signal — Stripe churn, classified and saved',
+  description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and enrolls the playbook in your Resend — after you approve.',
   openGraph: {
-    title: 'Retention — Stripe churn, classified and saved',
-    description: 'A churn agent that classifies price, bugs, competitors, never-activated, and silent renewers—then enrolls the playbook in YOUR Resend. Human approves every draft.',
+    title: 'Signal — Stripe churn, classified and saved',
+    description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and enrolls the playbook in your Resend — after you approve.',
     images: ['/og.png'],
   },
 };
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={spaceGrotesk.variable}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={inter.variable}>
+      <body className="font-sans antialiased bg-black text-white">{children}</body>
     </html>
   );
 }
