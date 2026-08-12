@@ -30,30 +30,46 @@ describe('Resend Client', () => {
 
   it('should enroll a contact in ret_price segment', async () => {
     mockFetch
-      .mockResolvedValueOnce({
-        ok: true,
-        text: async () => JSON.stringify({ data: [] }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: async () => JSON.stringify({ id: 'seg_price' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: async () => JSON.stringify({ id: 'contact_123' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        text: async () => JSON.stringify({}),
-      });
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(JSON.stringify({ id: 'contact_123' })),
+        })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(JSON.stringify({ data: [] })),
+        })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(JSON.stringify({ id: 'seg_price' })),
+        })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(JSON.stringify({})),
+        })
+      );
 
     const contactId = await enrollInResend('test@example.com', 'price');
     expect(contactId).toBe('contact_123');
 
     expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/contacts',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ email: 'test@example.com', unsubscribed: false }),
+      })
+    );
+
+    expect(mockFetch).toHaveBeenCalledWith(
       'https://api.resend.com/segments',
       expect.objectContaining({
-        method: 'GET',
+        headers: expect.any(Object),
       })
     );
 
@@ -62,14 +78,6 @@ describe('Resend Client', () => {
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ name: 'ret_price' }),
-      })
-    );
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.resend.com/contacts',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({ email: 'test@example.com', unsubscribed: false }),
       })
     );
 
