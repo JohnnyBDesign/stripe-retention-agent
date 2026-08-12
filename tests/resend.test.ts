@@ -17,11 +17,25 @@ vi.mock('resend', () => {
 beforeEach(() => {
   process.env.RESEND_API_KEY = 'test_key';
   mockFetch.mockClear();
-  mockFetch.mockImplementation((url: string) => {
-    if (url === 'https://api.resend.com/segments') {
+  mockFetch.mockImplementation((url: string, options?: any) => {
+    if (url === 'https://api.resend.com/contacts' && options?.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ id: 'contact_123' }),
+        text: async () => '',
+      });
+    }
+    if (url === 'https://api.resend.com/segments' && options?.method === 'GET') {
       return Promise.resolve({
         ok: true,
         json: async () => ({ data: [{ id: 'seg_123', name: 'ret_price' }] }),
+        text: async () => '',
+      });
+    }
+    if (url === 'https://api.resend.com/segments' && options?.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: { id: 'seg_new', name: 'ret_bug' } }),
         text: async () => '',
       });
     }
@@ -83,6 +97,13 @@ describe('Resend Client', () => {
 
   it('should create segment if it does not exist and add contact', async () => {
     mockFetch.mockImplementation((url: string, options?: any) => {
+      if (url === 'https://api.resend.com/contacts' && options?.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 'contact_123' }),
+          text: async () => '',
+        });
+      }
       if (url === 'https://api.resend.com/segments' && options?.method === 'GET') {
         return Promise.resolve({
           ok: true,

@@ -39,27 +39,41 @@ export async function enrollInResend(email: string, reason: ChurnReason): Promis
 }
 
 async function getOrCreateContact(email: string): Promise<string> {
-  const client = getResendClient();
+  const apiKey = process.env.RESEND_API_KEY;
   
-  try {
-    const contact = await client.contacts.create({
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY not set');
+  }
+
+  const response = await fetch('https://api.resend.com/contacts', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
       email,
       unsubscribed: false,
-    });
+    }),
+  });
 
-    const contactId = contact.data?.id;
+  if (response.ok) {
+    const result = await response.json();
+    const contactId = result.data?.id || result.id;
+    
     if (!contactId) {
-      throw new Error('Failed to create contact');
-    }
-
-    return contactId;
-  } catch (error: any) {
-    if (error.message?.includes('already exists') || error.message?.includes('Contact already exists')) {
-      return await getContactByEmail(email);
+      throw new Error('Failed to get contact ID from creation response');
     }
     
-    throw error;
+    return contactId;
   }
+
+  const errorText = await response.text();
+  if (errorText.includes('already exists') || errorText.includes('Contact already exists')) {
+    return await getContactByEmail(email);
+  }
+  
+  throw new Error(`Failed to create contact: ${errorText}`);
 }
 
 async function getContactByEmail(email: string): Promise<string> {
