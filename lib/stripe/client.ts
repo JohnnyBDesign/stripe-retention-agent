@@ -25,18 +25,34 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
+async function resolveCustomerEmail(customer: string | Stripe.Customer | Stripe.DeletedCustomer): Promise<string> {
+  if (typeof customer === 'string') {
+    const retrieved = await getStripeClient().customers.retrieve(customer);
+    if (!retrieved.deleted && retrieved.email) {
+      return retrieved.email;
+    }
+    return '';
+  }
+  if ('deleted' in customer && customer.deleted) {
+    return '';
+  }
+  return (customer as Stripe.Customer).email || '';
+}
+
 export async function getSubscriptionInfo(subscriptionId: string) {
   const client = getStripeClient();
   const subscription = await client.subscriptions.retrieve(subscriptionId, {
     expand: ['customer', 'default_payment_method'],
   });
 
-  const customer = subscription.customer as Stripe.Customer;
+  const customer = subscription.customer;
+  const customerId = typeof customer === 'string' ? customer : customer.id;
+  const customerEmail = await resolveCustomerEmail(customer);
   const plan = subscription.items.data[0]?.price;
 
   return {
-    customerId: customer.id,
-    customerEmail: customer.email || '',
+    customerId,
+    customerEmail,
     subscriptionId: subscription.id,
     plan: plan?.nickname || plan?.id || 'unknown',
     mrr: plan?.recurring?.interval === 'month' 
