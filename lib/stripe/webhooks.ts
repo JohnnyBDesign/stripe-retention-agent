@@ -39,7 +39,7 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
   switch (event.type) {
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
-      await handleSubscriptionChange(event.data.object as Stripe.Subscription);
+      await handleSubscriptionChange(event.data.object as Stripe.Subscription, event.id);
       break;
 
     case 'invoice.payment_failed':
@@ -47,7 +47,7 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
       break;
 
     case 'invoice.upcoming':
-      await handleUpcomingInvoice(event.data.object as Stripe.Invoice);
+      await handleUpcomingInvoice(event.data.object as Stripe.Invoice, event.id);
       break;
 
     case 'charge.refunded':
@@ -59,7 +59,7 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
   }
 }
 
-async function handleSubscriptionChange(subscription: Stripe.Subscription): Promise<void> {
+async function handleSubscriptionChange(subscription: Stripe.Subscription, eventId: string): Promise<void> {
   const isCanceled = subscription.status === 'canceled' || subscription.cancel_at_period_end;
   
   if (!isCanceled) {
@@ -109,8 +109,8 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription): Prom
       bodyDraft: classification.bodyDraft,
       state: 'pending',
       triggerType: 'cancel',
-      stripeEventIds: [],
-      slaDueAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      stripeEventIds: [eventId],
+      slaDueAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
     },
   });
 
@@ -121,7 +121,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
   console.log(`Payment failed for invoice ${invoice.id} - dunning stub only`);
 }
 
-async function handleUpcomingInvoice(invoice: Stripe.Invoice): Promise<void> {
+async function handleUpcomingInvoice(invoice: Stripe.Invoice, eventId: string): Promise<void> {
   if (!invoice.subscription) {
     return;
   }
@@ -181,7 +181,7 @@ async function handleUpcomingInvoice(invoice: Stripe.Invoice): Promise<void> {
             bodyDraft: classification.bodyDraft,
             state: 'pending',
             triggerType: classification.reason === 'never_activated' ? 'never_activated' : 'silent',
-            stripeEventIds: [],
+            stripeEventIds: [eventId],
             slaDueAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
           },
         });

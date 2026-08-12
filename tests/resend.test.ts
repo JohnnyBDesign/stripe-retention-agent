@@ -1,11 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 vi.mock('resend', () => {
   return {
     Resend: vi.fn().mockImplementation(() => ({
       contacts: {
         create: vi.fn().mockResolvedValue({ data: { id: 'contact_123' } }),
-        update: vi.fn().mockResolvedValue({ data: { id: 'contact_123' } }),
         list: vi.fn().mockResolvedValue({ data: { data: [] } }),
       },
     })),
@@ -15,6 +17,12 @@ vi.mock('resend', () => {
 beforeEach(() => {
   process.env.RESEND_API_KEY = 'test_key';
   process.env.RESEND_AUDIENCE_ID = 'aud_123';
+  mockFetch.mockClear();
+  mockFetch.mockResolvedValue({
+    ok: true,
+    json: async () => ({}),
+    text: async () => '',
+  });
 });
 
 import { enrollInResend, getTagForReason } from '@/lib/resend/client';
@@ -31,8 +39,40 @@ describe('Resend Client', () => {
     expect(getTagForReason('other')).toBe('ret_other');
   });
 
-  it('should enroll a contact in Resend with appropriate tag', async () => {
+  it('should enroll a contact and apply ret_price tag', async () => {
     const contactId = await enrollInResend('test@example.com', 'price');
     expect(contactId).toBe('contact_123');
+    
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/tags',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'Authorization': 'Bearer test_key',
+          'Content-Type': 'application/json',
+        }),
+        body: expect.stringContaining('ret_price'),
+      })
+    );
+    
+    const tagCallBody = JSON.parse(mockFetch.mock.calls.find((call: any) => 
+      call[0] === 'https://api.resend.com/tags'
+    )?.[1]?.body || '{}');
+    
+    expect(tagCallBody).toEqual({
+      audience_id: 'aud_123',
+      contact_id: 'contact_123',
+      tag_name: 'ret_price',
+    });
+  });
+
+  it('should apply ret_bug tag when enrolling for bug reason', async () => {
+    await enrollInResend('bug@example.com', 'bug');
+    
+    const tagCallBody = JSON.parse(mockFetch.mock.calls.find((call: any) => 
+      call[0] === 'https://api.resend.com/tags'
+    )?.[1]?.body || '{}');
+    
+    expect(tagCallBody.tag_name).toBe('ret_bug');
   });
 });
