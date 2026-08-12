@@ -53,7 +53,7 @@ export default function Pricing() {
               </li>
             </ul>
             <Link
-              href="/queue"
+              href="#pricing"
               className="block text-center px-6 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink rounded-pill font-semibold transition-colors"
             >
               Start with Stripe keys → get your first HITL card
@@ -107,7 +107,7 @@ export default function Pricing() {
               </li>
             </ul>
             <Link
-              href="/queue"
+              href="#pricing"
               className="block text-center px-6 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink rounded-pill font-semibold transition-colors"
             >
               Start with Stripe keys → get your first HITL card

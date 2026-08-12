@@ -13,7 +13,7 @@ export default function FinalCta() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/queue"
+              href="#pricing"
               className="w-full sm:w-auto px-8 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-base font-semibold rounded-pill transition-colors"
             >
               Start with Stripe keys → get your first HITL card

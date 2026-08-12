@@ -21,13 +21,13 @@ export default function Footer() {
         {/* Footer Links */}
         <div className="py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-afterwhy-mono text-sm">
-            © 2026 AfterWhy. Human-in-the-loop retention for Stripe.
+            © 2026 Human-in-the-loop retention for Stripe.
           </div>
           <Link
             href="/queue"
-            className="text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
+            className="text-xs text-afterwhy-mono hover:text-afterwhy-muted transition-colors"
           >
-            HITL Queue →
+            Open HITL queue (founders)
           </Link>
         </div>
       </div>
