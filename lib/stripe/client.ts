@@ -1,16 +1,32 @@
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set');
+let stripeClient: Stripe | null = null;
+
+function getStripeClient(): Stripe {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set');
+  }
+  
+  if (!stripeClient) {
+    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-06-20',
+      typescript: true,
+    });
+  }
+  
+  return stripeClient;
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-06-20',
-  typescript: true,
+export const stripe = new Proxy({} as Stripe, {
+  get: (_target, prop) => {
+    const client = getStripeClient();
+    return (client as any)[prop];
+  },
 });
 
 export async function getSubscriptionInfo(subscriptionId: string) {
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
+  const client = getStripeClient();
+  const subscription = await client.subscriptions.retrieve(subscriptionId, {
     expand: ['customer', 'default_payment_method'],
   });
 

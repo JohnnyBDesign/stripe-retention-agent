@@ -60,7 +60,7 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
     }
   }
 
-  if (subscription.cancelDetails?.feedback) {
+  if (subscription.cancelDetails) {
     const feedback = subscription.cancelDetails.feedback;
     const comment = subscription.cancelDetails.comment || '';
     
@@ -111,10 +111,10 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         bodyDraft: generateBugEmail(context),
       };
     }
-  }
 
-  if (subscription.cancelDetails) {
-    evidence.push('Subscription canceled without specific feedback');
+    if (!feedback && !comment) {
+      evidence.push('Subscription canceled without specific feedback');
+    }
   }
 
   return {

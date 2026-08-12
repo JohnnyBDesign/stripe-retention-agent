@@ -315,7 +315,7 @@ npm run lint
 
 ## Resend Tag Convention
 
-Tags applied on approval:
+Contacts are enrolled in Resend on approval. Tag mappings (for manual configuration):
 - `ret_price`
 - `ret_bug`
 - `ret_missing_feature`
@@ -325,7 +325,9 @@ Tags applied on approval:
 - `ret_payment_failed`
 - `ret_other`
 
-Configure email sequences in Resend Dashboard triggered by these tags.
+**Note**: The Resend API creates contacts but doesn't support programmatic tagging via the current SDK. Configure tags in Resend Dashboard automation rules or use the tag mapping above for custom integrations.
+
+Configure email sequences in Resend Dashboard triggered by contact creation or external automation.
 
 ## Roadmap (v1+)
 

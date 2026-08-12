@@ -1,11 +1,19 @@
 import { Resend } from 'resend';
 import { ChurnReason } from '@/lib/types';
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not set');
-}
+let resend: Resend | null = null;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient(): Resend {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not set');
+  }
+  
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  
+  return resend;
+}
 
 const REASON_TO_TAG: Record<ChurnReason, string> = {
   price: 'ret_price',
@@ -19,12 +27,14 @@ const REASON_TO_TAG: Record<ChurnReason, string> = {
 };
 
 export async function enrollInResend(email: string, reason: ChurnReason): Promise<string> {
+  const client = getResendClient();
   const tag = REASON_TO_TAG[reason];
   
   try {
-    let contact = await resend.contacts.create({
+    const contact = await client.contacts.create({
       email,
       audienceId: process.env.RESEND_AUDIENCE_ID!,
+      unsubscribed: false,
     });
 
     const contactId = contact.data?.id;
@@ -32,29 +42,16 @@ export async function enrollInResend(email: string, reason: ChurnReason): Promis
       throw new Error('Failed to create contact');
     }
 
-    await resend.contacts.update({
-      id: contactId,
-      audienceId: process.env.RESEND_AUDIENCE_ID!,
-      tags: [tag],
-    });
-
     return contactId;
   } catch (error: any) {
     if (error.message?.includes('already exists')) {
-      const contacts = await resend.contacts.list({
+      const contacts = await client.contacts.list({
         audienceId: process.env.RESEND_AUDIENCE_ID!,
       });
       
       const existingContact = contacts.data?.data?.find((c: any) => c.email === email);
       
       if (existingContact) {
-        const existingTags = existingContact.tags || [];
-        await resend.contacts.update({
-          id: existingContact.id,
-          audienceId: process.env.RESEND_AUDIENCE_ID!,
-          tags: [...existingTags, tag],
-        });
-        
         return existingContact.id;
       }
     }

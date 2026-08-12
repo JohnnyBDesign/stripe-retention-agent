@@ -52,6 +52,8 @@ model RetentionCase {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   
+  resendEnrollment    ResendEnrollment?
+  
   @@index([customerId])
   @@index([state])
   @@index([reason])

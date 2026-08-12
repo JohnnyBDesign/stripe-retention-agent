@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { enrollInResend, getTagForReason } from '@/lib/resend/client';
 
 vi.mock('resend', () => {
   return {
@@ -13,12 +12,14 @@ vi.mock('resend', () => {
   };
 });
 
-describe('Resend Client', () => {
-  beforeEach(() => {
-    process.env.RESEND_API_KEY = 'test_key';
-    process.env.RESEND_AUDIENCE_ID = 'aud_123';
-  });
+beforeEach(() => {
+  process.env.RESEND_API_KEY = 'test_key';
+  process.env.RESEND_AUDIENCE_ID = 'aud_123';
+});
 
+import { enrollInResend, getTagForReason } from '@/lib/resend/client';
+
+describe('Resend Client', () => {
   it('should map churn reasons to tags correctly', () => {
     expect(getTagForReason('price')).toBe('ret_price');
     expect(getTagForReason('bug')).toBe('ret_bug');

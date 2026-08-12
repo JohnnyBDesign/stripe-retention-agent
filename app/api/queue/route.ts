@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      cases: cases.map(c => ({
+      cases: cases.map((c: any) => ({
         ...c,
         evidence: c.evidence as string[],
       })),
