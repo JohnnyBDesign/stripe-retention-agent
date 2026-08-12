@@ -120,41 +120,41 @@ export default function QueuePage() {
   };
 
   if (loading) {
-    return <div className="p-8 bg-afterwhy-ink text-afterwhy-paper min-h-screen">Loading...</div>;
+    return <div className="p-8 bg-void text-chalk min-h-screen">Loading...</div>;
   }
 
   return (
-    <div className="flex h-screen bg-afterwhy-ink">
-      <div className="w-1/3 border-r border-afterwhy-line bg-afterwhy-elevated overflow-y-auto">
-        <div className="p-4 border-b border-afterwhy-line bg-afterwhy-ink">
+    <div className="flex h-screen bg-void">
+      <div className="w-1/3 border-r border-line bg-panel overflow-y-auto">
+        <div className="p-4 border-b border-line bg-void">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-xl font-bold text-afterwhy-paper">Retention Queue</h1>
-            <Link href="/" className="text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors">
+            <h1 className="text-xl font-bold text-chalk">Retention Queue</h1>
+            <Link href="/" className="text-sm text-mute hover:text-chalk transition-colors">
               ← Home
             </Link>
           </div>
-          <p className="text-sm text-afterwhy-muted">{cases.length} pending cases</p>
+          <p className="text-sm text-mute">{cases.length} pending cases</p>
         </div>
         
-        <div className="divide-y divide-afterwhy-line">
+        <div className="divide-y divide-line">
           {cases.map((c) => (
             <div
               key={c.id}
               onClick={() => selectCase(c)}
-              className={`p-4 cursor-pointer hover:bg-afterwhy-ink transition-colors ${
-                selectedCase?.id === c.id ? 'bg-afterwhy-ink border-l-2 border-afterwhy-amber' : ''
+              className={`p-4 cursor-pointer hover:bg-void transition-colors ${
+                selectedCase?.id === c.id ? 'bg-void border-l-2 border-lime' : ''
               }`}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium text-afterwhy-paper">{c.customerEmail}</p>
-                  <p className="text-sm text-afterwhy-muted">{c.plan}</p>
+                  <p className="font-medium text-chalk">{c.customerEmail}</p>
+                  <p className="text-sm text-mute">{c.plan}</p>
                 </div>
-                <span className="px-2 py-1 text-xs rounded-input bg-afterwhy-amber/20 text-afterwhy-amber border border-afterwhy-amber/30">
+                <span className="px-2 py-1 text-xs rounded bg-lime/20 text-lime border border-lime/30">
                   {c.reason}
                 </span>
               </div>
-              <div className="mt-2 flex gap-4 text-sm text-afterwhy-mono">
+              <div className="mt-2 flex gap-4 text-sm text-mute">
                 <span>${c.mrr.toFixed(2)} MRR</span>
                 <span>{c.tenureDays}d tenure</span>
                 <span>{Math.round(c.confidence * 100)}% conf</span>
@@ -164,12 +164,12 @@ export default function QueuePage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-afterwhy-ink">
+      <div className="flex-1 overflow-y-auto bg-void">
         {selectedCase ? (
           <div className="p-8">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2 text-afterwhy-paper">{selectedCase.customerEmail}</h2>
-              <div className="flex gap-4 text-sm text-afterwhy-muted">
+              <h2 className="text-2xl font-bold mb-2 text-chalk">{selectedCase.customerEmail}</h2>
+              <div className="flex gap-4 text-sm text-mute">
                 <span>Customer ID: {selectedCase.customerId}</span>
                 <span>Plan: {selectedCase.plan}</span>
                 <span>${selectedCase.mrr.toFixed(2)} MRR</span>
@@ -178,14 +178,14 @@ export default function QueuePage() {
             </div>
 
             <div className="mb-6">
-              <h3 className="font-semibold mb-2 text-afterwhy-paper">Classification</h3>
-              <div className="bg-afterwhy-elevated p-4 rounded-card border border-afterwhy-line space-y-3">
+              <h3 className="font-semibold mb-2 text-chalk">Classification</h3>
+              <div className="bg-panel p-4 rounded-2xl border border-line space-y-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-afterwhy-muted">Churn Reason</label>
+                  <label className="block text-sm font-medium mb-1 text-mute">Churn Reason</label>
                   <select
                     value={editedReason}
                     onChange={(e) => setEditedReason(e.target.value)}
-                    className="w-full border border-afterwhy-line rounded-input px-3 py-2 bg-afterwhy-ink text-afterwhy-paper focus:outline-none focus:border-afterwhy-amber"
+                    className="w-full border border-line rounded-2xl px-3 py-2 bg-void text-chalk focus:outline-none focus:border-lime"
                   >
                     <option value="price">Price</option>
                     <option value="bug">Bug</option>
@@ -196,16 +196,16 @@ export default function QueuePage() {
                     <option value="other">Other</option>
                   </select>
                   {editedReason !== selectedCase.reason && (
-                    <p className="text-xs text-afterwhy-amber mt-1">Reason override will be applied</p>
+                    <p className="text-xs text-lime mt-1">Reason override will be applied</p>
                   )}
                 </div>
-                <p className="text-afterwhy-muted"><strong className="text-afterwhy-paper">Confidence:</strong> {Math.round(selectedCase.confidence * 100)}%</p>
-                <p className="text-afterwhy-muted"><strong className="text-afterwhy-paper">Trigger:</strong> {selectedCase.triggerType}</p>
+                <p className="text-mute"><strong className="text-chalk">Confidence:</strong> {Math.round(selectedCase.confidence * 100)}%</p>
+                <p className="text-mute"><strong className="text-chalk">Trigger:</strong> {selectedCase.triggerType}</p>
                 <div className="mt-2">
-                  <strong className="text-afterwhy-paper">Evidence:</strong>
+                  <strong className="text-chalk">Evidence:</strong>
                   <ul className="list-disc list-inside mt-1">
                     {selectedCase.evidence.map((e, i) => (
-                      <li key={i} className="text-sm text-afterwhy-muted">{e}</li>
+                      <li key={i} className="text-sm text-mute">{e}</li>
                     ))}
                   </ul>
                 </div>
@@ -213,24 +213,24 @@ export default function QueuePage() {
             </div>
 
             <div className="mb-6">
-              <h3 className="font-semibold mb-2 text-afterwhy-paper">Email Draft</h3>
-              <div className="bg-afterwhy-elevated p-4 rounded-card border border-afterwhy-line space-y-4">
+              <h3 className="font-semibold mb-2 text-chalk">Email Draft</h3>
+              <div className="bg-panel p-4 rounded-2xl border border-line space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-afterwhy-muted">Subject</label>
+                  <label className="block text-sm font-medium mb-1 text-mute">Subject</label>
                   <input
                     type="text"
                     value={editedSubject}
                     onChange={(e) => setEditedSubject(e.target.value)}
-                    className="w-full border border-afterwhy-line rounded-input px-3 py-2 bg-afterwhy-ink text-afterwhy-paper focus:outline-none focus:border-afterwhy-amber"
+                    className="w-full border border-line rounded-2xl px-3 py-2 bg-void text-chalk focus:outline-none focus:border-lime"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-afterwhy-muted">Body</label>
+                  <label className="block text-sm font-medium mb-1 text-mute">Body</label>
                   <textarea
                     value={editedBody}
                     onChange={(e) => setEditedBody(e.target.value)}
                     rows={10}
-                    className="w-full border border-afterwhy-line rounded-input px-3 py-2 bg-afterwhy-ink text-afterwhy-paper focus:outline-none focus:border-afterwhy-amber"
+                    className="w-full border border-line rounded-2xl px-3 py-2 bg-void text-chalk focus:outline-none focus:border-lime"
                   />
                 </div>
               </div>
@@ -239,38 +239,38 @@ export default function QueuePage() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleApprove}
-                className="px-6 py-2 bg-afterwhy-signal text-afterwhy-ink rounded-card hover:bg-afterwhy-signal/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-cyan text-void rounded-2xl hover:bg-cyan/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={editedReason === 'payment_failed' || editedReason === 'other'}
               >
                 Approve & Enroll in Resend
               </button>
               <button
                 onClick={handleReject}
-                className="px-6 py-2 bg-afterwhy-danger text-white rounded-card hover:bg-afterwhy-danger/90 font-medium transition-colors"
+                className="px-6 py-2 bg-danger text-white rounded-2xl hover:bg-danger/90 font-medium transition-colors"
               >
                 Reject
               </button>
               <button
                 onClick={() => handleSnooze(4)}
-                className="px-6 py-2 bg-afterwhy-elevated border border-afterwhy-line text-afterwhy-paper rounded-card hover:border-afterwhy-amber font-medium transition-colors"
+                className="px-6 py-2 bg-panel border border-line text-chalk rounded-2xl hover:border-lime font-medium transition-colors"
               >
                 Snooze 4h
               </button>
               <button
                 onClick={() => handleSnooze(24)}
-                className="px-6 py-2 bg-afterwhy-elevated border border-afterwhy-line text-afterwhy-paper rounded-card hover:border-afterwhy-amber font-medium transition-colors"
+                className="px-6 py-2 bg-panel border border-line text-chalk rounded-2xl hover:border-lime font-medium transition-colors"
               >
                 Snooze 24h
               </button>
               {(editedReason === 'payment_failed' || editedReason === 'other') && (
-                <p className="text-sm text-afterwhy-amber self-center">
+                <p className="text-sm text-lime self-center">
                   Cannot auto-enroll {editedReason} cases. Override reason or reject.
                 </p>
               )}
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-afterwhy-mono">
+          <div className="flex items-center justify-center h-full text-mute">
             Select a case to review
           </div>
         )}

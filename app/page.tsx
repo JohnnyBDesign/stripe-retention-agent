@@ -1,6 +1,6 @@
 import Nav from '@/components/landing/Nav';
 import Hero from '@/components/landing/Hero';
-import Problem from '@/components/landing/Problem';
+import WhyUs from '@/components/landing/WhyUs';
 import HowItWorks from '@/components/landing/HowItWorks';
 import Compare from '@/components/landing/Compare';
 import Pricing from '@/components/landing/Pricing';
@@ -9,10 +9,10 @@ import Footer from '@/components/landing/Footer';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-afterwhy-ink">
+    <div className="min-h-screen bg-void text-chalk">
       <Nav />
       <Hero />
-      <Problem />
+      <WhyUs />
       <HowItWorks />
       <Compare />
       <Pricing />

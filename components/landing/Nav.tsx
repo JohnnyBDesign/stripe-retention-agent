@@ -19,7 +19,7 @@ export default function Nav() {
     <nav
       className={`sticky top-0 z-50 transition-all ${
         isScrolled
-          ? 'bg-afterwhy-elevated/95 backdrop-blur-sm border-b border-afterwhy-line'
+          ? 'bg-panel/95 backdrop-blur-sm border-b border-line'
           : 'bg-transparent'
       }`}
     >
@@ -28,38 +28,38 @@ export default function Nav() {
           <Link href="/" className="flex items-center gap-3 group">
             <Image
               src="/mark.svg"
-              alt="AfterWhy"
+              alt="Retention"
               width={24}
               height={24}
               className="transition-transform group-hover:scale-105"
             />
-            <span className="font-display text-lg text-afterwhy-paper">
-              AfterWhy
+            <span className="text-lg text-chalk font-semibold">
+              Retention
             </span>
           </Link>
 
           <div className="flex items-center gap-6">
             <Link
               href="#how"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
+              className="hidden sm:block text-sm text-mute hover:text-chalk transition-colors"
             >
               How it works
             </Link>
             <Link
               href="#compare"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
+              className="hidden sm:block text-sm text-mute hover:text-chalk transition-colors"
             >
               vs SaveMRR
             </Link>
             <Link
               href="#pricing"
-              className="hidden sm:block text-sm text-afterwhy-muted hover:text-afterwhy-paper transition-colors"
+              className="hidden sm:block text-sm text-mute hover:text-chalk transition-colors"
             >
               Pricing
             </Link>
             <Link
               href="/queue"
-              className="px-4 py-2 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-sm font-medium rounded-pill transition-colors"
+              className="px-4 py-2 bg-lime hover:bg-lime/90 text-void text-sm font-semibold rounded-pill transition-colors"
             >
               Connect Stripe
             </Link>

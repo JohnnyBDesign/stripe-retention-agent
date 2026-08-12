@@ -1,4 +1,4 @@
-export default function Problem() {
+export default function WhyUs() {
   const points = [
     'Cancel flows save the click. We save the customer after we know why they left—or went quiet.',
     'Stripe-native reason brain → Resend segments (ret_price, ret_bug, …). Your ESP. Your brand. Human approval.',
@@ -8,18 +8,18 @@ export default function Problem() {
   ];
 
   return (
-    <section className="border-y border-afterwhy-line bg-afterwhy-elevated">
+    <section className="border-y border-line bg-panel">
       <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <h2 className="font-display text-3xl sm:text-4xl font-bold text-afterwhy-paper mb-12 text-center">
-          Why AfterWhy
+        <h2 className="text-3xl sm:text-4xl font-bold text-chalk mb-12 text-center">
+          Why us
         </h2>
         <div className="space-y-6 max-w-3xl mx-auto">
           {points.map((point, i) => (
             <div key={i} className="flex gap-4 items-start">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-afterwhy-amber text-afterwhy-ink flex items-center justify-center font-bold text-sm">
-                {i + 1}
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center font-mono font-bold text-lime">
+                {String(i + 1).padStart(2, '0')}
               </div>
-              <p className="text-afterwhy-muted pt-1 text-lg leading-relaxed">
+              <p className="text-mute pt-2 text-lg leading-relaxed">
                 {point}
               </p>
             </div>
