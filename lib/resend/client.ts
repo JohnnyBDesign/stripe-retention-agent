@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { ChurnReason } from '@/lib/types';
 
 let resend: Resend | null = null;
+const segmentCache = new Map<string, string>();
 
 function getResendClient(): Resend {
   if (!process.env.RESEND_API_KEY) {
@@ -15,7 +16,7 @@ function getResendClient(): Resend {
   return resend;
 }
 
-const REASON_TO_TAG: Record<ChurnReason, string> = {
+const REASON_TO_SEGMENT: Record<ChurnReason, string> = {
   price: 'ret_price',
   bug: 'ret_bug',
   missing_feature: 'ret_missing_feature',
@@ -28,12 +29,21 @@ const REASON_TO_TAG: Record<ChurnReason, string> = {
 
 export async function enrollInResend(email: string, reason: ChurnReason): Promise<string> {
   const client = getResendClient();
-  const tag = REASON_TO_TAG[reason];
+  const segmentName = REASON_TO_SEGMENT[reason];
+  
+  const contactId = await getOrCreateContact(email);
+  const segmentId = await ensureSegmentExists(segmentName);
+  await addContactToSegment(contactId, segmentId);
+  
+  return contactId;
+}
+
+async function getOrCreateContact(email: string): Promise<string> {
+  const client = getResendClient();
   
   try {
     const contact = await client.contacts.create({
       email,
-      audienceId: process.env.RESEND_AUDIENCE_ID!,
       unsubscribed: false,
     });
 
@@ -42,66 +52,126 @@ export async function enrollInResend(email: string, reason: ChurnReason): Promis
       throw new Error('Failed to create contact');
     }
 
-    await applyTagToContact(contactId, tag);
     return contactId;
   } catch (error: any) {
-    if (error.message?.includes('already exists')) {
-      const contacts = await client.contacts.list({
-        audienceId: process.env.RESEND_AUDIENCE_ID!,
-      });
-      
-      const existingContact = contacts.data?.data?.find((c: any) => c.email === email);
-      
-      if (existingContact) {
-        await applyTagToContact(existingContact.id, tag);
-        return existingContact.id;
-      }
+    if (error.message?.includes('already exists') || error.message?.includes('Contact already exists')) {
+      return await getContactByEmail(email);
     }
     
     throw error;
   }
 }
 
-async function applyTagToContact(contactId: string, tag: string): Promise<void> {
+async function getContactByEmail(email: string): Promise<string> {
   const apiKey = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
   
-  if (!apiKey || !audienceId) {
-    throw new Error('RESEND_API_KEY or RESEND_AUDIENCE_ID not set');
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY not set');
   }
 
-  const response = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts/${contactId}`, {
-    method: 'PATCH',
+  const response = await fetch(`https://api.resend.com/contacts?email=${encodeURIComponent(email)}`, {
+    method: 'GET',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      first_name: undefined,
-      last_name: undefined,
-      unsubscribed: false,
-    }),
   });
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`Failed to apply tag to contact: ${error}`);
+    throw new Error(`Failed to get contact by email: ${error}`);
   }
 
-  await fetch(`https://api.resend.com/tags`, {
+  const result = await response.json();
+  const contactId = result.data?.[0]?.id;
+  
+  if (!contactId) {
+    throw new Error(`Contact with email ${email} not found`);
+  }
+  
+  return contactId;
+}
+
+async function ensureSegmentExists(segmentName: string): Promise<string> {
+  if (segmentCache.has(segmentName)) {
+    return segmentCache.get(segmentName)!;
+  }
+
+  const apiKey = process.env.RESEND_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY not set');
+  }
+
+  const listResponse = await fetch('https://api.resend.com/segments', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!listResponse.ok) {
+    const error = await listResponse.text();
+    throw new Error(`Failed to list segments: ${error}`);
+  }
+
+  const segments = await listResponse.json();
+  const existingSegment = segments.data?.find((s: any) => s.name === segmentName);
+  
+  if (existingSegment) {
+    segmentCache.set(segmentName, existingSegment.id);
+    return existingSegment.id;
+  }
+
+  const createResponse = await fetch('https://api.resend.com/segments', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      audience_id: audienceId,
-      contact_id: contactId,
-      tag_name: tag,
-    }),
+    body: JSON.stringify({ name: segmentName }),
   });
+
+  if (!createResponse.ok) {
+    const error = await createResponse.text();
+    throw new Error(`Failed to create segment: ${error}`);
+  }
+
+  const newSegment = await createResponse.json();
+  const segmentId = newSegment.data?.id || newSegment.id;
+  
+  if (!segmentId) {
+    throw new Error('Failed to get segment ID from creation response');
+  }
+  
+  segmentCache.set(segmentName, segmentId);
+  return segmentId;
+}
+
+async function addContactToSegment(contactId: string, segmentId: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY not set');
+  }
+
+  const response = await fetch(`https://api.resend.com/contacts/${contactId}/segments/${segmentId}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    if (!error.includes('already exists') && !error.includes('already in segment')) {
+      throw new Error(`Failed to add contact to segment: ${error}`);
+    }
+  }
 }
 
 export function getTagForReason(reason: ChurnReason): string {
-  return REASON_TO_TAG[reason];
+  return REASON_TO_SEGMENT[reason];
 }
