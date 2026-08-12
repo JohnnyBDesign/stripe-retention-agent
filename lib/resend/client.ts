@@ -16,15 +16,13 @@ function getResendClient(): Resend {
   return resend;
 }
 
-const REASON_TO_SEGMENT: Record<ChurnReason, string> = {
+const REASON_TO_SEGMENT: Partial<Record<ChurnReason, string>> = {
   price: 'ret_price',
   bug: 'ret_bug',
   missing_feature: 'ret_missing_feature',
   competitor: 'ret_competitor',
   never_activated: 'ret_never_activated',
   silent_rescue: 'ret_silent_rescue',
-  payment_failed: 'ret_payment_failed',
-  other: 'ret_other',
 };
 
 export async function enrollInResend(email: string, reason: ChurnReason): Promise<string> {
@@ -186,6 +184,6 @@ async function addContactToSegment(contactId: string, segmentId: string): Promis
   }
 }
 
-export function getTagForReason(reason: ChurnReason): string {
-  return REASON_TO_SEGMENT[reason];
+export function getTagForReason(reason: ChurnReason): string | null {
+  return REASON_TO_SEGMENT[reason] ?? null;
 }

@@ -64,8 +64,8 @@ describe('Resend Client', () => {
     expect(getTagForReason('competitor')).toBe('ret_competitor');
     expect(getTagForReason('never_activated')).toBe('ret_never_activated');
     expect(getTagForReason('silent_rescue')).toBe('ret_silent_rescue');
-    expect(getTagForReason('payment_failed')).toBe('ret_payment_failed');
-    expect(getTagForReason('other')).toBe('ret_other');
+    expect(getTagForReason('payment_failed')).toBe(null);
+    expect(getTagForReason('other')).toBe(null);
   });
 
   it('should enroll a contact and add to ret_price segment', async () => {
