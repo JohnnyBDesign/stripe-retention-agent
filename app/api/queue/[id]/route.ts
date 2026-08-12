@@ -72,45 +72,57 @@ export async function PATCH(
 
     if (state === 'approved' || state === 'edited_approved') {
       const effectiveReason = updated.overrideReason || updated.reason;
+      const { enrollInResend, getTagForReason } = await import('@/lib/resend/client');
       
-      if (effectiveReason !== 'payment_failed' && effectiveReason !== 'other') {
-        const { enrollInResend } = await import('@/lib/resend/client');
-        const { getTagForReason } = await import('@/lib/resend/client');
+      try {
+        const tag = getTagForReason(effectiveReason as any);
+        if (!tag) {
+          console.log(`No segment enroll for reason=${effectiveReason}`);
+          return NextResponse.json({
+            ...updated,
+            evidence: updated.evidence as string[],
+          });
+        }
+        if (!updated.customerEmail) {
+          console.log(`No customerEmail for case ${updated.id}`);
+          return NextResponse.json({
+            ...updated,
+            evidence: updated.evidence as string[],
+          });
+        }
         
-        try {
-          const tag = getTagForReason(effectiveReason as any);
-          const triggerEventId = updated.stripeEventIds[0] || updated.id;
-          
-          const existingEnrollment = await prisma.resendEnrollment.findFirst({
-            where: {
+        const triggerEventId = updated.stripeEventIds[0] || updated.id;
+        
+        const existingEnrollment = await prisma.resendEnrollment.findFirst({
+          where: {
+            customerId: updated.customerId,
+            tag,
+            triggerEventId,
+          },
+        });
+
+        if (!existingEnrollment) {
+          const contactId = await enrollInResend(
+            updated.customerEmail,
+            effectiveReason as any
+          );
+
+          await prisma.resendEnrollment.create({
+            data: {
+              caseId: updated.id,
+              contactId,
               customerId: updated.customerId,
               tag,
+              tags: [tag],
               triggerEventId,
             },
           });
-
-          if (!existingEnrollment) {
-            const contactId = await enrollInResend(
-              updated.customerEmail,
-              effectiveReason as any
-            );
-
-            await prisma.resendEnrollment.create({
-              data: {
-                caseId: updated.id,
-                contactId,
-                customerId: updated.customerId,
-                tag,
-                tags: [tag],
-                triggerEventId,
-              },
-            });
-          } else {
-            console.log(`Enrollment already exists for customer ${updated.customerId} with tag ${tag}`);
-          }
-        } catch (error: any) {
-          console.error('Failed to enroll in Resend:', error);
+          console.log(`Enrolled ${updated.customerEmail} in segment ${tag}`);
+        } else {
+          console.log(`Enrollment already exists for customer ${updated.customerId} with segment ${tag}`);
         }
+      } catch (error: any) {
+        console.error('Failed to enroll in Resend:', error);
       }
     }
 

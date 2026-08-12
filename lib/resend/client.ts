@@ -29,6 +29,10 @@ export async function enrollInResend(email: string, reason: ChurnReason): Promis
   const client = getResendClient();
   const segmentName = REASON_TO_SEGMENT[reason];
   
+  if (!segmentName) {
+    throw new Error(`No Resend segment enroll for reason=${reason}`);
+  }
+  
   const contactId = await getOrCreateContact(email);
   const segmentId = await ensureSegmentExists(segmentName);
   await addContactToSegment(contactId, segmentId);
