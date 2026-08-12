@@ -7,7 +7,7 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 - **Stripe Webhook Ingestion**: Signed webhooks with idempotent event storage
 - **Churn Classification**: Heuristic v0 classifier with 7 reason types + payment_failed stub
 - **HITL Queue**: Human-in-the-loop approval queue with minimal UI
-- **Resend Integration**: Automatic enrollment via reason-specific tags
+- **Resend Integration**: Automatic enrollment via Resend segments named `ret_*`
 - **Silent Rescue**: Detects inactive users before renewal
 - **Never-Activated Detection**: Identifies users who never engaged but keep paying
 
@@ -36,7 +36,7 @@ An agent-native Stripe retention product that intelligently classifies churn rea
                                                     ▼
 ┌─────────────┐      ┌──────────────┐      ┌────────────┐
 │   Resend    │◀─────│     HITL     │◀─────│  Database  │
-│   (Tags)    │      │  Approval UI │      │ (Postgres) │
+│ (Segments)  │      │  Approval UI │      │ (Postgres) │
 └─────────────┘      └──────────────┘      └────────────┘
 ```
 
@@ -46,7 +46,7 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 - Node.js 20+
 - PostgreSQL 15+
 - Stripe account with test mode
-- Resend account with audience created
+- Resend account (segments named `ret_*` auto-created on enroll)
 
 ### Installation
 
@@ -70,7 +70,6 @@ An agent-native Stripe retention product that intelligently classifies churn rea
 
    # Resend
    RESEND_API_KEY=re_...
-   RESEND_AUDIENCE_ID=aud_...
 
    # Database
    DATABASE_URL=postgresql://user:password@localhost:5432/retention_agent
