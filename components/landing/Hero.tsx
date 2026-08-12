@@ -19,7 +19,7 @@ export default function Hero() {
               href="/queue"
               className="w-full sm:w-auto px-8 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink text-base font-semibold rounded-pill transition-colors"
             >
-              Connect Stripe → get your first HITL card
+              Start with Stripe keys → get your first HITL card
             </Link>
             <Link
               href="#pricing"

@@ -56,7 +56,7 @@ export default function Pricing() {
               href="/queue"
               className="block text-center px-6 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink rounded-pill font-semibold transition-colors"
             >
-              Connect Stripe → get your first HITL card
+              Start with Stripe keys → get your first HITL card
             </Link>
           </div>
 
@@ -110,7 +110,7 @@ export default function Pricing() {
               href="/queue"
               className="block text-center px-6 py-3 bg-afterwhy-amber hover:bg-afterwhy-amber-hover text-afterwhy-ink rounded-pill font-semibold transition-colors"
             >
-              Connect Stripe → get your first HITL card
+              Start with Stripe keys → get your first HITL card
             </Link>
           </div>
         </div>

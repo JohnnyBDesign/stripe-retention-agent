@@ -8,31 +8,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        afterwhy: {
-          ink: '#0B0F14',
-          elevated: '#141A22',
-          paper: '#F6F1E8',
-          muted: '#C9C2B6',
-          amber: '#F5A524',
-          'amber-hover': '#FFB84D',
-          signal: '#2DD4A8',
-          danger: '#E85D4C',
-          line: '#243041',
-          mono: '#8B95A5',
-        },
+        void: '#09090B',
+        chalk: '#FAFAFA',
+        mute: '#A1A1AA',
+        lime: '#A3E635',
+        cyan: '#22D3EE',
+        danger: '#F43F5E',
+        line: '#27272A',
+        panel: '#18181B',
       },
       fontFamily: {
-        display: ['var(--font-fraunces)', 'serif'],
-        sans: ['var(--font-dm-sans)', 'sans-serif'],
+        sans: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'monospace'],
       },
-      fontSize: {
-        'hero': ['3.5rem', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
-      },
       borderRadius: {
-        card: '10px',
+        card: '12px',
         pill: '999px',
-        input: '6px',
       },
       maxWidth: {
         content: '1120px',
