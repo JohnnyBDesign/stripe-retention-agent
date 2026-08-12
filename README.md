@@ -1,5 +1,7 @@
 # Stripe Retention Agent
 
+**Pilot deploy (Railway):** see [docs/PILOT.md](docs/PILOT.md).
+
 An agent-native Stripe retention product that intelligently classifies churn reasons, creates human-in-the-loop approval queues, and enrolls customers in recovery sequences via Resend.
 
 ## Features
