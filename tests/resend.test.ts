@@ -16,19 +16,48 @@ vi.mock('resend', () => {
 
 beforeEach(() => {
   process.env.RESEND_API_KEY = 'test_key';
-  process.env.RESEND_AUDIENCE_ID = 'aud_123';
   mockFetch.mockClear();
-  mockFetch.mockResolvedValue({
-    ok: true,
-    json: async () => ({}),
-    text: async () => '',
+  mockFetch.mockImplementation((url: string, options?: any) => {
+    if (url === 'https://api.resend.com/contacts' && options?.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ id: 'contact_123' }),
+        text: async () => '',
+      });
+    }
+    if (url === 'https://api.resend.com/segments' && options?.method === 'GET') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: [{ id: 'seg_123', name: 'ret_price' }] }),
+        text: async () => '',
+      });
+    }
+    if (url === 'https://api.resend.com/segments' && options?.method === 'POST') {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: { id: 'seg_new', name: 'ret_bug' } }),
+        text: async () => '',
+      });
+    }
+    if (url.startsWith('https://api.resend.com/contacts/') && url.includes('/segments/')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+        text: async () => '',
+      });
+    }
+    return Promise.resolve({
+      ok: true,
+      json: async () => ({}),
+      text: async () => '',
+    });
   });
 });
 
 import { enrollInResend, getTagForReason } from '@/lib/resend/client';
 
 describe('Resend Client', () => {
-  it('should map churn reasons to tags correctly', () => {
+  it('should map churn reasons to segment names correctly', () => {
     expect(getTagForReason('price')).toBe('ret_price');
     expect(getTagForReason('bug')).toBe('ret_bug');
     expect(getTagForReason('missing_feature')).toBe('ret_missing_feature');
@@ -39,40 +68,85 @@ describe('Resend Client', () => {
     expect(getTagForReason('other')).toBe('ret_other');
   });
 
-  it('should enroll a contact and apply ret_price tag', async () => {
+  it('should enroll a contact and add to ret_price segment', async () => {
     const contactId = await enrollInResend('test@example.com', 'price');
     expect(contactId).toBe('contact_123');
     
     expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.resend.com/tags',
+      'https://api.resend.com/segments',
+      expect.objectContaining({
+        method: 'GET',
+        headers: expect.objectContaining({
+          'Authorization': 'Bearer test_key',
+          'Content-Type': 'application/json',
+        }),
+      })
+    );
+    
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/contacts/contact_123/segments/seg_123',
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({
           'Authorization': 'Bearer test_key',
           'Content-Type': 'application/json',
         }),
-        body: expect.stringContaining('ret_price'),
       })
     );
-    
-    const tagCallBody = JSON.parse(mockFetch.mock.calls.find((call: any) => 
-      call[0] === 'https://api.resend.com/tags'
-    )?.[1]?.body || '{}');
-    
-    expect(tagCallBody).toEqual({
-      audience_id: 'aud_123',
-      contact_id: 'contact_123',
-      tag_name: 'ret_price',
-    });
   });
 
-  it('should apply ret_bug tag when enrolling for bug reason', async () => {
+  it('should create segment if it does not exist and add contact', async () => {
+    mockFetch.mockImplementation((url: string, options?: any) => {
+      if (url === 'https://api.resend.com/contacts' && options?.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ id: 'contact_123' }),
+          text: async () => '',
+        });
+      }
+      if (url === 'https://api.resend.com/segments' && options?.method === 'GET') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ data: [] }),
+          text: async () => '',
+        });
+      }
+      if (url === 'https://api.resend.com/segments' && options?.method === 'POST') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ data: { id: 'seg_new', name: 'ret_bug' } }),
+          text: async () => '',
+        });
+      }
+      if (url.startsWith('https://api.resend.com/contacts/') && url.includes('/segments/')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({}),
+          text: async () => '',
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+        text: async () => '',
+      });
+    });
+
     await enrollInResend('bug@example.com', 'bug');
     
-    const tagCallBody = JSON.parse(mockFetch.mock.calls.find((call: any) => 
-      call[0] === 'https://api.resend.com/tags'
-    )?.[1]?.body || '{}');
-    
-    expect(tagCallBody.tag_name).toBe('ret_bug');
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/segments',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ name: 'ret_bug' }),
+      })
+    );
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/contacts/contact_123/segments/seg_new',
+      expect.objectContaining({
+        method: 'POST',
+      })
+    );
   });
 });
