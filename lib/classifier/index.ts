@@ -32,8 +32,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
       reason: 'never_activated',
       confidence: 0.85,
       evidence,
-      recommendedSequence: 'onboarding_assistance',
-      subjectDraft: 'Need help getting started?',
+      recommendedSequence: 'ret_never_activated',
+      subjectDraft: 'You\'re paid up — 12 minutes to first win in {{product}}',
       bodyDraft: generateNeverActivatedEmail(context),
     };
   }
@@ -53,8 +53,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         reason: 'silent_rescue',
         confidence: 0.80,
         evidence,
-        recommendedSequence: 're_engagement',
-        subjectDraft: 'We miss you!',
+        recommendedSequence: 'ret_silent_rescue',
+        subjectDraft: 'Checking in — still useful, or did we go quiet on you?',
         bodyDraft: generateSilentRescueEmail(context),
       };
     }
@@ -70,8 +70,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         reason: 'price',
         confidence: 0.90,
         evidence,
-        recommendedSequence: 'discount_offer',
-        subjectDraft: 'Special offer just for you',
+        recommendedSequence: 'ret_price',
+        subjectDraft: 'Quick idea to make {{plan}} fit this quarter',
         bodyDraft: generatePriceEmail(context),
       };
     }
@@ -82,8 +82,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         reason: 'missing_feature',
         confidence: 0.85,
         evidence,
-        recommendedSequence: 'feature_roadmap',
-        subjectDraft: "We'd love your feedback",
+        recommendedSequence: 'ret_missing_feature',
+        subjectDraft: 'You\'re not crazy — {{feature}} is on us (timeline inside)',
         bodyDraft: generateMissingFeatureEmail(context),
       };
     }
@@ -94,8 +94,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         reason: 'competitor',
         confidence: 0.85,
         evidence,
-        recommendedSequence: 'competitive_comparison',
-        subjectDraft: 'Can we win you back?',
+        recommendedSequence: 'ret_competitor',
+        subjectDraft: 'Honest comparison: {{product}} vs what you\'re evaluating',
         bodyDraft: generateCompetitorEmail(context),
       };
     }
@@ -106,8 +106,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
         reason: 'bug',
         confidence: 0.85,
         evidence,
-        recommendedSequence: 'support_escalation',
-        subjectDraft: 'Let us help fix that',
+        recommendedSequence: 'ret_bug',
+        subjectDraft: 'We saw the rough edge — here\'s the fix (+ how to unblock)',
         bodyDraft: generateBugEmail(context),
       };
     }
@@ -122,8 +122,8 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
     confidence: 0.50,
     evidence,
     recommendedSequence: null,
-    subjectDraft: 'Sorry to see you go',
-    bodyDraft: generateGenericEmail(context),
+    subjectDraft: '',
+    bodyDraft: '',
   };
 }
 

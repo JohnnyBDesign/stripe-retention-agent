@@ -15,6 +15,9 @@ interface RetentionCase {
   subjectDraft: string;
   bodyDraft: string;
   state: string;
+  triggerType: string;
+  slaDueAt: string | null;
+  overrideReason: string | null;
   createdAt: string;
 }
 
@@ -24,6 +27,7 @@ export default function QueuePage() {
   const [selectedCase, setSelectedCase] = useState<RetentionCase | null>(null);
   const [editedSubject, setEditedSubject] = useState('');
   const [editedBody, setEditedBody] = useState('');
+  const [editedReason, setEditedReason] = useState('');
 
   useEffect(() => {
     fetchCases();
@@ -45,12 +49,14 @@ export default function QueuePage() {
     setSelectedCase(c);
     setEditedSubject(c.subjectDraft);
     setEditedBody(c.bodyDraft);
+    setEditedReason(c.overrideReason || c.reason);
   };
 
   const handleApprove = async () => {
     if (!selectedCase) return;
 
     const isEdited = editedSubject !== selectedCase.subjectDraft || editedBody !== selectedCase.bodyDraft;
+    const reasonOverridden = editedReason !== selectedCase.reason;
 
     try {
       await fetch(`/api/queue/${selectedCase.id}`, {
@@ -60,6 +66,7 @@ export default function QueuePage() {
           state: isEdited ? 'edited_approved' : 'approved',
           subjectDraft: editedSubject,
           bodyDraft: editedBody,
+          overrideReason: reasonOverridden ? editedReason : null,
         }),
       });
 
@@ -86,6 +93,28 @@ export default function QueuePage() {
     } catch (error) {
       console.error('Failed to reject case:', error);
       alert('Failed to reject case');
+    }
+  };
+
+  const handleSnooze = async (hours: number) => {
+    if (!selectedCase) return;
+
+    try {
+      const snoozeUntil = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+      await fetch(`/api/queue/${selectedCase.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          state: 'snoozed',
+          snoozeUntil,
+        }),
+      });
+
+      setCases(cases.filter(c => c.id !== selectedCase.id));
+      setSelectedCase(null);
+    } catch (error) {
+      console.error('Failed to snooze case:', error);
+      alert('Failed to snooze case');
     }
   };
 
@@ -144,9 +173,28 @@ export default function QueuePage() {
 
             <div className="mb-6">
               <h3 className="font-semibold mb-2">Classification</h3>
-              <div className="bg-white p-4 rounded border">
-                <p><strong>Reason:</strong> {selectedCase.reason}</p>
+              <div className="bg-white p-4 rounded border space-y-3">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Churn Reason</label>
+                  <select
+                    value={editedReason}
+                    onChange={(e) => setEditedReason(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                  >
+                    <option value="price">Price</option>
+                    <option value="bug">Bug</option>
+                    <option value="missing_feature">Missing Feature</option>
+                    <option value="competitor">Competitor</option>
+                    <option value="never_activated">Never Activated</option>
+                    <option value="silent_rescue">Silent Rescue</option>
+                    <option value="other">Other</option>
+                  </select>
+                  {editedReason !== selectedCase.reason && (
+                    <p className="text-xs text-orange-600 mt-1">Reason override will be applied</p>
+                  )}
+                </div>
                 <p><strong>Confidence:</strong> {Math.round(selectedCase.confidence * 100)}%</p>
+                <p><strong>Trigger:</strong> {selectedCase.triggerType}</p>
                 <div className="mt-2">
                   <strong>Evidence:</strong>
                   <ul className="list-disc list-inside mt-1">
@@ -182,10 +230,11 @@ export default function QueuePage() {
               </div>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleApprove}
                 className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                disabled={editedReason === 'payment_failed' || editedReason === 'other'}
               >
                 Approve & Enroll in Resend
               </button>
@@ -195,6 +244,23 @@ export default function QueuePage() {
               >
                 Reject
               </button>
+              <button
+                onClick={() => handleSnooze(4)}
+                className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Snooze 4h
+              </button>
+              <button
+                onClick={() => handleSnooze(24)}
+                className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Snooze 24h
+              </button>
+              {(editedReason === 'payment_failed' || editedReason === 'other') && (
+                <p className="text-sm text-orange-600 self-center">
+                  Cannot auto-enroll {editedReason} cases. Override reason or reject.
+                </p>
+              )}
             </div>
           </div>
         ) : (

@@ -23,12 +23,16 @@ model StripeEvent {
 model CustomerActivity {
   id                String   @id @default(cuid())
   customerId        String
+  stripeCustomerId  String?
   lastActiveAt      DateTime?
-  activationAt      DateTime?
+  activationCompletedAt DateTime?
+  events            Json?
   updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
   
   @@unique([customerId])
   @@index([customerId])
+  @@index([stripeCustomerId])
 }
 
 model RetentionCase {
@@ -47,6 +51,10 @@ model RetentionCase {
   bodyDraft           String
   state               String   @default("pending")
   overrideReason      String?
+  triggerType         String
+  stripeEventIds      String[]
+  slaDueAt            DateTime?
+  snoozeUntil         DateTime?
   reviewedAt          DateTime?
   reviewedBy          String?
   createdAt           DateTime @default(now())
@@ -58,16 +66,33 @@ model RetentionCase {
   @@index([state])
   @@index([reason])
   @@index([createdAt])
+  @@index([slaDueAt])
 }
 
 model ResendEnrollment {
-  id         String   @id @default(cuid())
-  caseId     String   @unique
-  contactId  String?
-  tags       String[]
-  enrolledAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  caseId           String   @unique
+  contactId        String?
+  customerId       String
+  tag              String
+  tags             String[]
+  triggerEventId   String
+  enrolledAt       DateTime @default(now())
   
-  case       RetentionCase @relation(fields: [caseId], references: [id])
+  case             RetentionCase @relation(fields: [caseId], references: [id])
   
+  @@unique([customerId, tag, triggerEventId])
   @@index([caseId])
+  @@index([triggerEventId])
+}
+
+model ActivityEvent {
+  id          String   @id @default(cuid())
+  customerId  String
+  name        String
+  occurredAt  DateTime
+  createdAt   DateTime @default(now())
+  
+  @@index([customerId])
+  @@index([occurredAt])
 }

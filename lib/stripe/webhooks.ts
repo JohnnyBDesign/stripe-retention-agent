@@ -51,7 +51,7 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
       break;
 
     case 'charge.refunded':
-      await handleChargeRefunded(event.data.object as Stripe.Charge);
+      await handleChargeRefunded(event.data.object as Stripe.Charge, event.id);
       break;
 
     default:
@@ -108,6 +108,9 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription): Prom
       subjectDraft: classification.subjectDraft,
       bodyDraft: classification.bodyDraft,
       state: 'pending',
+      triggerType: 'cancel',
+      stripeEventIds: [],
+      slaDueAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     },
   });
 
@@ -177,6 +180,9 @@ async function handleUpcomingInvoice(invoice: Stripe.Invoice): Promise<void> {
             subjectDraft: classification.subjectDraft,
             bodyDraft: classification.bodyDraft,
             state: 'pending',
+            triggerType: classification.reason === 'never_activated' ? 'never_activated' : 'silent',
+            stripeEventIds: [],
+            slaDueAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
           },
         });
 
@@ -186,6 +192,62 @@ async function handleUpcomingInvoice(invoice: Stripe.Invoice): Promise<void> {
   }
 }
 
-async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
-  console.log(`Charge refunded: ${charge.id}`);
+async function handleChargeRefunded(charge: Stripe.Charge, eventId: string): Promise<void> {
+  if (!charge.customer) {
+    console.log(`Charge ${charge.id} has no customer, skipping`);
+    return;
+  }
+
+  const customerId = typeof charge.customer === 'string' ? charge.customer : charge.customer.id;
+  const customer = await stripe.customers.retrieve(customerId);
+  
+  if (customer.deleted) {
+    return;
+  }
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    limit: 1,
+  });
+
+  const subscription = subscriptions.data[0];
+  if (!subscription) {
+    return;
+  }
+
+  const subscriptionInfo = await getSubscriptionInfo(subscription.id);
+  const activity = await getCustomerActivity(customerId);
+  
+  const tenureDays = Math.ceil(
+    (Date.now() - subscriptionInfo.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  const evidence = [
+    `Charge refunded: ${charge.id}`,
+    `Amount: $${(charge.amount_refunded / 100).toFixed(2)}`,
+    `Refund reason: ${charge.refunds?.data[0]?.reason || 'not specified'}`,
+  ];
+
+  await prisma.retentionCase.create({
+    data: {
+      customerId,
+      customerEmail: customer.email || '',
+      subscriptionId: subscription.id,
+      plan: subscriptionInfo.plan,
+      mrr: subscriptionInfo.mrr,
+      tenureDays,
+      reason: 'other',
+      confidence: 0.60,
+      evidence,
+      recommendedSequence: null,
+      subjectDraft: '',
+      bodyDraft: '',
+      state: 'pending',
+      triggerType: 'refund',
+      stripeEventIds: [eventId],
+      slaDueAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+    },
+  });
+
+  console.log(`Created refund retention case for customer ${customerId} with 4h SLA`);
 }

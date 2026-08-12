@@ -1,4 +1,5 @@
 import { Stripe } from 'stripe';
+import { prisma } from '@/lib/db';
 
 let stripeClient: Stripe | null = null;
 
@@ -55,8 +56,37 @@ export async function getCustomerActivity(customerId: string): Promise<{
   lastActiveAt: Date | null;
   activationAt: Date | null;
 }> {
+  const activity = await prisma.customerActivity.findUnique({
+    where: { customerId },
+  });
+
+  if (activity) {
+    return {
+      lastActiveAt: activity.lastActiveAt,
+      activationAt: activity.activationCompletedAt,
+    };
+  }
+
+  const customer = await getStripeClient().customers.retrieve(customerId);
+  
+  if (customer.deleted) {
+    return {
+      lastActiveAt: null,
+      activationAt: null,
+    };
+  }
+
+  let activationAt: Date | null = null;
+  if (customer.metadata?.activation_completed_at) {
+    try {
+      activationAt = new Date(customer.metadata.activation_completed_at);
+    } catch (e) {
+      console.error('Invalid activation_completed_at in Stripe metadata:', e);
+    }
+  }
+
   return {
     lastActiveAt: null,
-    activationAt: null,
+    activationAt,
   };
 }
