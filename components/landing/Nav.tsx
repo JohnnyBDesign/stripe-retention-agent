@@ -58,10 +58,10 @@ export default function Nav() {
               Pricing
             </Link>
             <Link
-              href="#pricing"
+              href="/queue"
               className="px-4 py-2 bg-lime hover:bg-lime/90 text-void text-sm font-semibold rounded-pill transition-colors"
             >
-              Start with Stripe keys
+              Connect Stripe
             </Link>
           </div>
         </div>

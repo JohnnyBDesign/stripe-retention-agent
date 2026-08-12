@@ -54,16 +54,16 @@ export default function Pricing() {
             </ul>
             <div className="space-y-3">
               <Link
-                href="#pricing"
+                href="/queue"
                 className="block text-center px-6 py-3 bg-lime hover:bg-lime/90 text-void rounded-2xl font-semibold transition-colors"
               >
-                Start with Stripe keys → get your first HITL card
+                Connect Stripe → get your first HITL card
               </Link>
               <Link
                 href="#pricing"
                 className="block text-center px-6 py-3 border-2 border-line hover:border-chalk text-chalk rounded-2xl font-medium transition-colors text-sm"
               >
-                Apply for founding — 50% off 90 days after first successful enroll
+                Apply for founding (50% off 90d after first enroll)
               </Link>
             </div>
           </div>
@@ -116,16 +116,16 @@ export default function Pricing() {
             </ul>
             <div className="space-y-3">
               <Link
-                href="#pricing"
+                href="/queue"
                 className="block text-center px-6 py-3 bg-lime hover:bg-lime/90 text-void rounded-2xl font-semibold transition-colors"
               >
-                Start with Stripe keys → get your first HITL card
+                Connect Stripe → get your first HITL card
               </Link>
               <Link
                 href="#pricing"
                 className="block text-center px-6 py-3 border-2 border-line hover:border-chalk text-chalk rounded-2xl font-medium transition-colors text-sm"
               >
-                Apply for founding — 50% off 90 days after first successful enroll
+                Apply for founding (50% off 90d after first enroll)
               </Link>
             </div>
           </div>
