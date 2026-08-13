@@ -26,7 +26,7 @@ export default function Nav() {
               href="#pricing"
               className="px-5 py-2.5 bg-white text-black text-sm font-medium rounded-pill hover:bg-white/90 transition"
             >
-              See who's leaving — and why
+              See who&apos;s leaving — and why
             </Link>
           </div>
         </div>

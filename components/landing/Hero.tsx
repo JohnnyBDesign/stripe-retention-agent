@@ -37,7 +37,7 @@ export default function Hero() {
               href="#pricing"
               className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
             >
-              See who's leaving — and why
+              See who&apos;s leaving — and why
             </Link>
             <Link 
               href="#founding"
