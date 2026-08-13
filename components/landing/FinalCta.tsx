@@ -9,7 +9,7 @@ export default function FinalCta() {
             Get your first HITL card this week
           </h2>
           <p className="text-xl text-gray mb-8 max-w-2xl mx-auto">
-            Connect your Stripe account, map one webhook, and see your first classified 
+            Add your Stripe keys, configure webhooks, and see your first classified 
             churn reason by Friday. Week 1 average: too_expensive → ret_price.
           </p>
           
