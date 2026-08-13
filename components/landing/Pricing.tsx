@@ -26,14 +26,17 @@ export default function Pricing() {
   ];
 
   return (
-    <section className="relative py-20 px-6 md:px-8" id="pricing">
-      <div className="mx-auto max-w-content">
+    <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="pricing">
+      {/* Atmospheric backdrop */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-surface/30 via-canvas to-canvas pointer-events-none opacity-50" />
+      
+      <div className="mx-auto max-w-content relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             Pricing
           </h2>
-          <p className="text-xl text-gray mb-6">Simple, transparent pricing for every stage</p>
-          <p className="text-lg text-gray-dim">
+          <p className="text-xl text-ink-dim mb-6">Simple, transparent pricing for every stage</p>
+          <p className="text-lg text-ink-subdued">
             Founding customers: 50% off for 90 days after first successful enroll<br/>
             Annual: 2 months free
           </p>
@@ -45,22 +48,22 @@ export default function Pricing() {
               key={plan.name}
               className={`rounded-3xl p-8 border ${
                 plan.highlighted 
-                  ? 'bg-charcoal border-white/20' 
-                  : 'bg-charcoal border-line'
+                  ? 'bg-surface border-line-hover' 
+                  : 'bg-surface border-line'
               }`}
             >
-              <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-              <p className="text-gray mb-6">{plan.description}</p>
+              <h3 className="text-2xl font-bold text-ink mb-2">{plan.name}</h3>
+              <p className="text-ink-dim mb-6">{plan.description}</p>
               
               <div className="mb-6">
-                <span className="text-5xl font-bold text-white">${plan.price}</span>
-                <span className="text-gray ml-2">/month</span>
+                <span className="text-5xl font-bold text-ink">${plan.price}</span>
+                <span className="text-ink-dim ml-2">/month</span>
               </div>
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-gray">
-                    <span className="text-accent-teal mt-1">✓</span>
+                  <li key={feature} className="flex items-start gap-3 text-ink-dim">
+                    <span className="text-status-green mt-1">✓</span>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -69,7 +72,7 @@ export default function Pricing() {
               <button className={`w-full py-3 font-medium rounded-pill transition ${
                 plan.highlighted
                   ? 'bg-white text-black hover:bg-white/90'
-                  : 'bg-charcoal text-white border border-line hover:bg-panel'
+                  : 'bg-surface text-ink border border-line hover:bg-panel'
               }`}>
                 Get started
               </button>
@@ -77,8 +80,8 @@ export default function Pricing() {
           ))}
         </div>
 
-        <p className="text-center text-sm text-gray-dim mt-8">
-          Need custom volume or features? <a href="/contact" className="text-white underline">Contact us</a>
+        <p className="text-center text-sm text-ink-subdued mt-8">
+          Need custom volume or features? <a href="/contact" className="text-ink underline">Contact us</a>
         </p>
       </div>
     </section>

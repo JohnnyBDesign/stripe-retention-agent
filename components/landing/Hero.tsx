@@ -1,27 +1,27 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 px-6 md:px-8">
-      <div className="mx-auto max-w-content">
+    <section className="relative pt-32 pb-20 px-6 md:px-8 overflow-hidden">
+      {/* Backdrop gradient - subtle dark atmospheric tone */}
+      <div className="absolute inset-0 bg-gradient-to-b from-surface/40 via-canvas to-canvas pointer-events-none" />
+      
+      <div className="mx-auto max-w-content relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           {/* Chip */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-charcoal text-gray-dim text-xs font-medium mb-8">
-            EARLY ACCESS · Stripe → HITL → Resend
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-surface border border-line text-ink-dim text-xs font-medium mb-8">
+            For SaaS on Stripe Billing
           </div>
 
-          {/* H1 with inline face */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 flex items-center justify-center gap-4 flex-wrap">
-            Meet 
-            <Image src="/face.svg" alt="" width={80} height={80} className="inline-block" />
-            Signal
+          {/* H1 - text only */}
+          <h1 className="text-5xl md:text-hero-lg font-bold text-ink mb-6">
+            Retention agent for your Stripe subscribers
           </h1>
 
-          {/* Subhead */}
-          <p className="text-xl md:text-2xl text-gray leading-relaxed mb-10 max-w-2xl mx-auto">
-            A churn agent that classifies cancel reasons and silent renewers, drafts the save, 
-            and enrolls the playbook in your Resend — after you approve.
+          {/* Subhead - clarify Signal is third-party */}
+          <p className="text-xl md:text-2xl text-ink-dim leading-relaxed mb-10 max-w-2xl mx-auto">
+            Signal classifies why customers cancel or downgrade, drafts retention emails, 
+            and waits for your approval before enrolling them in Resend playbooks.
           </p>
 
           {/* CTAs */}
@@ -34,15 +34,15 @@ export default function Hero() {
             </Link>
             <Link 
               href="#founding"
-              className="px-8 py-4 bg-charcoal text-white text-base font-medium rounded-pill hover:bg-panel transition"
+              className="px-8 py-4 bg-surface text-ink text-base font-medium rounded-pill hover:bg-panel transition border border-line"
             >
               Apply for founding — 50% off 90 days after first successful enroll
             </Link>
           </div>
 
           {/* Trust line */}
-          <p className="text-sm text-gray-dim">
-            Human-in-the-loop · Resend segments · No cancel widget
+          <p className="text-sm text-ink-subdued">
+            Human-in-the-loop · Resend segments · No auto-sends
           </p>
         </div>
       </div>
