@@ -1,0 +1,9 @@
+# TypeScript build info
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
