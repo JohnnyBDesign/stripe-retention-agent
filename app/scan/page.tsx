@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 type ScanResult = {
   totalLeakage: number;
@@ -60,18 +63,15 @@ export default function ScanPage() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-line bg-canvas/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-black">
+      {/* Nav - Nothing Design */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-black">
         <div className="mx-auto max-w-content px-6 md:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-lg font-semibold text-ink">Signal</span>
+              <span className="font-mono text-label uppercase tracking-[0.08em] text-text-display">Signal</span>
             </Link>
-            <Link 
-              href="/"
-              className="text-sm text-ink-dim hover:text-ink transition"
-            >
+            <Link href="/" className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary hover:text-text-display transition">
               Back to home
             </Link>
           </div>
@@ -84,158 +84,159 @@ export default function ScanPage() {
           {!result ? (
             <>
               {/* Header */}
-              <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold text-ink mb-4">
+              <div className="mb-12">
+                <h1 className="font-display text-display-lg md:text-display-xl font-medium text-text-display mb-4 tracking-tight">
                   See who&apos;s leaving — and why
                 </h1>
-                <p className="text-lg text-ink-dim leading-relaxed">
+                <p className="font-body text-subheading text-text-secondary leading-relaxed">
                   60 seconds. Restricted read key. Never stored.
                 </p>
               </div>
 
               {/* Required Permissions */}
-              <div className="bg-surface border border-line rounded-3xl p-6 mb-8">
-                <h2 className="text-sm font-semibold text-ink mb-3">Restricted Read Only</h2>
-                <ul className="space-y-2 text-sm text-ink-dim">
+              <Card className="bg-surface border-border-visible p-6 mb-8">
+                <h2 className="font-mono text-label uppercase tracking-[0.08em] text-text-primary mb-4">Restricted Read Only</h2>
+                <ul className="space-y-2 font-body text-body-sm text-text-secondary">
                   <li className="flex items-center gap-2">
-                    <span className="text-status-green">✓</span>
+                    <span className="text-success">✓</span>
                     Customers
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-status-green">✓</span>
+                    <span className="text-success">✓</span>
                     Subscriptions
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-status-green">✓</span>
+                    <span className="text-success">✓</span>
                     Invoices
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-status-green">✓</span>
+                    <span className="text-success">✓</span>
                     Events
                   </li>
                 </ul>
-                <div className="mt-4 pt-4 border-t border-line">
-                  <p className="text-xs text-ink-subdued">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="font-mono text-caption text-text-disabled">
                     Never persisted. Never logged. Create at{' '}
                     <a 
                       href="https://dashboard.stripe.com/apikeys/create?type=restricted" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-ink-dim hover:text-ink underline"
+                      className="text-text-secondary hover:text-text-primary underline transition"
                     >
                       dashboard.stripe.com/apikeys/create
                     </a>
                   </p>
                 </div>
-              </div>
+              </Card>
 
               {/* Scan Form */}
               <form onSubmit={handleScan} className="space-y-6">
                 <div>
-                  <label htmlFor="stripeKey" className="block text-sm font-medium text-ink mb-2">
+                  <label htmlFor="stripeKey" className="block font-mono text-label uppercase tracking-[0.08em] text-text-primary mb-3">
                     Paste your restricted key
                   </label>
-                  <input
+                  <Input
                     id="stripeKey"
                     type="password"
                     value={stripeKey}
                     onChange={(e) => setStripeKey(e.target.value)}
                     placeholder="rk_live_..."
-                    className="w-full px-4 py-3 bg-surface border border-line rounded-xl text-ink placeholder:text-ink-subdued focus:outline-none focus:ring-2 focus:ring-white/20 font-mono text-sm"
                     disabled={loading}
                     required
                   />
-                  <p className="mt-2 text-xs text-ink-subdued">
-                    Starts with <code className="text-ink-dim">rk_live_</code> or <code className="text-ink-dim">rk_test_</code>
+                  <p className="mt-2 font-mono text-caption text-text-disabled">
+                    Starts with <code className="text-text-secondary">rk_live_</code> or <code className="text-text-secondary">rk_test_</code>
                   </p>
                 </div>
 
                 {error && (
-                  <div className="bg-status-red/10 border border-status-red/20 rounded-xl p-4">
-                    <p className="text-sm text-status-red">{error}</p>
-                  </div>
+                  <Card className="bg-surface border-accent p-4">
+                    <p className="font-body text-body-sm text-error">{error}</p>
+                  </Card>
                 )}
 
-                <button
+                <Button
                   type="submit"
                   disabled={loading || !stripeKey}
-                  className="w-full px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
                 >
                   {loading ? 'Scanning 90 days...' : 'Scan 90 days'}
-                </button>
+                </Button>
               </form>
 
               {/* Trust indicators */}
               <div className="mt-8 text-center">
-                <p className="text-xs text-ink-subdued">
+                <p className="font-mono text-caption text-text-disabled">
                   Independent product, not made by Stripe
                 </p>
               </div>
             </>
           ) : (
             <>
-              {/* Results Header - Hero $ = Sum of All Four Buckets */}
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-surface border border-line text-ink-dim text-xs font-medium mb-6">
+              {/* Results Header */}
+              <div className="mb-12">
+                <div className="inline-block px-4 py-2 border border-border-visible rounded-pill font-mono text-caption uppercase tracking-[0.06em] text-text-secondary mb-6">
                   Scanned {new Date(result.scannedAt).toLocaleDateString()}
                 </div>
                 
-                <h1 className="text-6xl md:text-7xl font-bold text-ink mb-2">
+                <h1 className="font-display text-[72px] md:text-[96px] leading-[0.95] font-medium text-text-display mb-2 tracking-tight">
                   ${result.totalLeakage.toLocaleString()}
                 </h1>
-                <p className="text-xl text-ink-dim">
+                <p className="font-body text-subheading text-text-secondary">
                   leaking / 90d
                 </p>
               </div>
 
               {/* Four Scan Buckets: Failed / Cancel / Downgrade / Leaving-Soon */}
               <div className="grid grid-cols-2 gap-3 mb-12">
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+                <Card className="bg-surface border-border-visible p-5">
+                  <div className="font-display text-display-sm font-medium text-text-display mb-1">
                     ${result.breakdown.voluntary.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Cancel</div>
-                </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+                  <div className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary">Cancel</div>
+                </Card>
+                <Card className="bg-surface border-border-visible p-5">
+                  <div className="font-display text-display-sm font-medium text-text-display mb-1">
                     ${result.breakdown.leavingSoon.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Leaving Soon</div>
-                </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+                  <div className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary">Leaving Soon</div>
+                </Card>
+                <Card className="bg-surface border-border-visible p-5">
+                  <div className="font-display text-display-sm font-medium text-text-display mb-1">
                     ${result.breakdown.downgrades.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Downgrade</div>
-                </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+                  <div className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary">Downgrade</div>
+                </Card>
+                <Card className="bg-surface border-border-visible p-5">
+                  <div className="font-display text-display-sm font-medium text-text-display mb-1">
                     ${result.breakdown.involuntary.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Failed</div>
-                </div>
+                  <div className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary">Failed</div>
+                </Card>
               </div>
 
               {/* Why They Left - Classified Voluntary Cancels Only */}
-              <div className="bg-surface border border-line rounded-3xl p-8 mb-8">
-                <h2 className="text-xl font-semibold text-ink mb-6">Why they left</h2>
+              <Card className="bg-surface border-border-visible p-8 mb-8">
+                <h2 className="font-display text-display-sm font-medium text-text-display mb-6">Why they left</h2>
                 
                 {Object.entries(result.reasonBreakdown).length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {Object.entries(result.reasonBreakdown)
                       .sort(([, a], [, b]) => b - a)
                       .map(([reason, amount]) => {
                         const voluntaryTotal = result.breakdown.voluntary + result.breakdown.leavingSoon;
                         const percentage = voluntaryTotal > 0 ? (amount / voluntaryTotal) * 100 : 0;
                         return (
-                          <div key={reason} className="space-y-1.5">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-ink-dim">{REASON_LABELS[reason] || reason}</span>
-                              <span className="font-semibold text-ink">${amount.toLocaleString()}</span>
+                          <div key={reason} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-body text-body text-text-secondary">{REASON_LABELS[reason] || reason}</span>
+                              <span className="font-mono text-body font-medium text-text-display">${amount.toLocaleString()}</span>
                             </div>
-                            <div className="h-1.5 bg-panel rounded-full overflow-hidden">
+                            <div className="h-1 bg-border rounded-full overflow-hidden">
                               <div 
-                                className="h-full bg-ink rounded-full transition-all"
+                                className="h-full bg-text-display rounded-full transition-all"
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
@@ -244,65 +245,63 @@ export default function ScanPage() {
                       })}
                   </div>
                 ) : (
-                  <p className="text-ink-dim text-center py-8">
+                  <p className="font-body text-body text-text-secondary text-center py-8">
                     No cancellation reasons detected in the scanned period.
                   </p>
                 )}
-              </div>
+              </Card>
 
               {/* Failed Payments Note - Display Only */}
-              <div className="bg-panel border border-line rounded-2xl p-5 mb-8">
+              <Card className="bg-surface-raised border-border p-5 mb-8">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-ink-dim">Failed payments — display only</span>
-                  <span className="text-lg font-semibold text-ink">
+                  <span className="font-body text-body-sm text-text-secondary">Failed payments — display only</span>
+                  <span className="font-mono text-heading font-medium text-text-primary">
                     ${result.breakdown.involuntary.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-xs text-ink-subdued">
+                <p className="font-mono text-caption text-text-disabled">
                   Failed payments — Stripe retries; not Signal v0.
                 </p>
-              </div>
+              </Card>
 
               {/* Optional Activity Signal Note */}
-              <div className="bg-surface border border-line rounded-2xl p-4 mb-8">
-                <p className="text-xs text-ink-subdued text-center">
+              <Card className="bg-surface border-border p-4 mb-8">
+                <p className="font-mono text-caption text-text-disabled text-center">
                   Silent renewers need a usage signal — connect activity after you start.
                 </p>
-              </div>
+              </Card>
 
               {/* Post-Scan CTA */}
-              <div className="bg-gradient-to-br from-surface to-panel border border-line rounded-3xl p-8 text-center">
-                <h3 className="text-2xl font-bold text-ink mb-3">
+              <Card className="bg-surface border-border-visible p-8 text-center mb-8">
+                <h3 className="font-display text-display-md font-medium text-text-display mb-3">
                   Get these in a queue you approve
                 </h3>
-                <p className="text-ink-dim mb-6 max-w-lg mx-auto">
+                <p className="font-body text-body text-text-secondary mb-6 max-w-lg mx-auto">
                   Signal classifies every cancel, drafts the save, and sends through your Resend — after you approve. No auto-sends.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link 
-                    href="/#pricing"
-                    className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
-                  >
-                    See pricing
+                  <Link href="/#pricing">
+                    <Button variant="primary" size="lg">
+                      See pricing
+                    </Button>
                   </Link>
-                  <Link 
-                    href="/queue"
-                    className="px-8 py-4 bg-surface text-ink text-base font-medium rounded-pill hover:bg-panel transition border border-line"
-                  >
-                    View demo queue
+                  <Link href="/queue">
+                    <Button variant="secondary" size="lg">
+                      View demo queue
+                    </Button>
                   </Link>
                 </div>
-              </div>
+              </Card>
 
               {/* Scan Again */}
-              <div className="mt-8 text-center">
+              <div className="text-center">
                 <button
                   onClick={() => {
                     setResult(null);
                     setStripeKey('');
                     setError(null);
                   }}
-                  className="text-sm text-ink-dim hover:text-ink transition underline"
+                  className="font-mono text-caption uppercase tracking-[0.06em] text-text-secondary hover:text-text-primary transition underline"
                 >
                   Scan another account
                 </button>
