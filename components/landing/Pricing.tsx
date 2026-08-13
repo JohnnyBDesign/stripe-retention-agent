@@ -10,9 +10,9 @@ export default function Pricing() {
       price: 99,
       description: 'For early-stage SaaS testing retention plays',
       features: [
-        '≤100 approved enrolls/mo',
-        '1 HITL seat',
-        'Resend segments',
+        '≤100 approved sends/mo',
+        '1 approval seat',
+        'Sending included',
         'Email support',
       ],
     },
@@ -21,10 +21,10 @@ export default function Pricing() {
       price: 249,
       description: 'For scaling SaaS with high churn volume',
       features: [
-        '≤500 approved enrolls/mo',
-        '3 HITL seats',
+        '≤500 approved sends/mo',
+        '3 approval seats',
+        'Sending included',
         'Priority support',
-        'Resend segments',
       ],
       highlighted: true,
     },
@@ -34,15 +34,15 @@ export default function Pricing() {
     <section className="relative py-20 px-6 md:px-8" id="pricing">
       <div className="mx-auto max-w-content relative z-10">
         <div className="mb-16">
-          <h2 className="font-display text-display-lg text-text-display mb-6 font-medium">
+          <h2 className="font-display text-display-lg mb-6 font-normal">
             Pricing
           </h2>
-          <p className="font-body text-subheading text-text-secondary mb-4 max-w-2xl">
-            Simple, transparent pricing for every stage
+          <p className="font-body text-subheading text-muted-foreground mb-4 max-w-2xl">
+            Simple, transparent pricing. Sending included.
           </p>
-          <p className="font-mono text-caption uppercase tracking-[0.06em] text-text-disabled">
-            Founding customers: 50% off for 90 days after first successful enroll<br/>
-            Annual: 2 months free
+          <p className="font-mono text-label uppercase tracking-[0.05em] text-muted-foreground">
+            Founding customers: 50% off for 90 days after first successful send<br/>
+            Annual: 2 months free · Stripe required
           </p>
         </div>
 
@@ -50,26 +50,22 @@ export default function Pricing() {
           {plans.map((plan) => (
             <Card 
               key={plan.name}
-              className={`p-8 ${
-                plan.highlighted 
-                  ? 'border-border-visible bg-surface' 
-                  : 'border-border bg-black'
-              }`}
+              className={`p-8 ${plan.highlighted ? 'border-foreground/20' : ''}`}
             >
               <div className="mb-6">
-                <p className="font-mono text-caption uppercase tracking-[0.08em] text-text-disabled mb-2">
+                <p className="font-mono text-sm uppercase tracking-wider text-muted-foreground mb-2">
                   {plan.name}
                 </p>
-                <p className="font-body text-body-sm text-text-secondary mb-6">
+                <p className="font-body text-sm text-muted-foreground mb-6">
                   {plan.description}
                 </p>
               </div>
               
               <div className="mb-8">
-                <span className="font-display text-display-lg text-text-display">
+                <span className="font-display text-display-lg">
                   ${plan.price}
                 </span>
-                <span className="font-mono text-caption text-text-disabled ml-2">
+                <span className="font-mono text-sm text-muted-foreground ml-2">
                   /MONTH
                 </span>
               </div>
@@ -79,15 +75,15 @@ export default function Pricing() {
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <span className="font-mono text-success mt-1">✓</span>
-                    <span className="font-body text-body-sm text-text-secondary">{feature}</span>
+                    <span className="font-mono mt-1">✓</span>
+                    <span className="font-body text-sm text-muted-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <Link href="/scan">
                 <Button 
-                  variant={plan.highlighted ? 'primary' : 'secondary'} 
+                  variant={plan.highlighted ? 'default' : 'outline'} 
                   className="w-full"
                 >
                   Get started
@@ -97,8 +93,8 @@ export default function Pricing() {
           ))}
         </div>
 
-        <p className="text-center font-mono text-caption uppercase tracking-[0.06em] text-text-disabled mt-8">
-          Need custom volume or features? <a href="/contact" className="text-text-primary underline">Contact us</a>
+        <p className="text-center font-mono text-sm uppercase tracking-wider text-muted-foreground mt-8">
+          Need custom volume or features? <a href="/contact" className="underline">Contact us</a>
         </p>
       </div>
     </section>

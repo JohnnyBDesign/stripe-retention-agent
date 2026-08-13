@@ -38,10 +38,10 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <nav className="border-b border-border px-6 md:px-8 py-4">
         <div className="mx-auto max-w-content">
-          <Link href="/" className="font-mono text-label uppercase tracking-[0.08em] text-text-display">
+          <Link href="/" className="font-mono text-sm uppercase tracking-wider font-semibold">
             Signal
           </Link>
         </div>
@@ -50,18 +50,18 @@ export default function ContactPage() {
       <main className="px-6 md:px-8 py-20">
         <div className="mx-auto max-w-2xl">
           <div className="mb-12">
-            <h1 className="font-display text-display-lg text-text-display mb-4 font-medium">
+            <h1 className="font-display text-display-lg mb-4 font-normal">
               Contact
             </h1>
-            <p className="font-body text-subheading text-text-secondary">
+            <p className="font-body text-subheading text-muted-foreground">
               Need custom volume or features? Have questions about Signal? We&apos;ll get back to you.
             </p>
           </div>
 
-          <Card className="p-8 bg-surface border-border-visible">
+          <Card className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                <label htmlFor="name" className="block font-mono text-sm uppercase tracking-wider mb-2">
                   Name
                 </label>
                 <Input
@@ -75,7 +75,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                <label htmlFor="email" className="block font-mono text-sm uppercase tracking-wider mb-2">
                   Email
                 </label>
                 <Input
@@ -89,7 +89,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="company" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                <label htmlFor="company" className="block font-mono text-sm uppercase tracking-wider mb-2">
                   Company
                 </label>
                 <Input
@@ -103,7 +103,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                <label htmlFor="message" className="block font-mono text-sm uppercase tracking-wider mb-2">
                   Message
                 </label>
                 <textarea
@@ -112,28 +112,28 @@ export default function ContactPage() {
                   rows={6}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-black border border-border rounded-card px-4 py-3 font-body text-body text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-interactive focus:border-transparent"
+                  className="w-full bg-background border border-border rounded-md px-4 py-3 font-body text-body placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                 />
               </div>
 
               <div className="flex items-center gap-4">
                 <Button 
                   type="submit" 
-                  variant="primary"
+                  variant="default"
                   disabled={status === 'sending'}
                 >
                   {status === 'sending' ? 'Sending...' : 'Send message'}
                 </Button>
                 
                 {status === 'sent' && (
-                  <span className="font-mono text-caption uppercase tracking-[0.06em] text-success">
-                    [SENT]
+                  <span className="font-mono text-sm uppercase tracking-wider text-green-600">
+                    Sent
                   </span>
                 )}
                 
                 {status === 'error' && (
-                  <span className="font-mono text-caption uppercase tracking-[0.06em] text-error">
-                    [ERROR]
+                  <span className="font-mono text-sm uppercase tracking-wider text-destructive">
+                    Error
                   </span>
                 )}
               </div>
@@ -141,7 +141,7 @@ export default function ContactPage() {
           </Card>
 
           <div className="mt-8">
-            <Link href="/" className="font-body text-body-sm text-text-secondary hover:text-text-primary transition">
+            <Link href="/" className="font-body text-sm text-muted-foreground hover:text-foreground transition">
               ← Back to home
             </Link>
           </div>

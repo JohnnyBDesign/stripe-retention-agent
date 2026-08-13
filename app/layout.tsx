@@ -1,18 +1,26 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Space_Mono } from 'next/font/google';
+import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-const spaceGrotesk = Space_Grotesk({
+const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  weight: ['300', '400', '500', '700'],
+  variable: '--font-instrument-sans',
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
-const spaceMono = Space_Mono({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-space-mono',
-  weight: ['400', '700'],
+  variable: '--font-instrument-serif',
+  weight: ['400'],
+  display: 'swap',
+  style: ['normal', 'italic'],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  weight: ['400', '500', '600'],
   display: 'swap',
 });
 
@@ -31,12 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${spaceMono.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>
     </html>
   );

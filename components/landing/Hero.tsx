@@ -1,48 +1,55 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import AnimatedSphere from './AnimatedSphere';
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 px-6 md:px-8 overflow-hidden min-h-screen flex items-center">
-      {/* Subtle dot grid background */}
-      <div className="absolute inset-0 dot-grid-subtle pointer-events-none opacity-50" />
+    <section className="relative pt-32 pb-20 px-6 md:px-8 overflow-hidden min-h-[90vh] flex items-center noise-overlay">
+      {/* Grid lines background */}
+      <div className="absolute inset-0 grid-lines pointer-events-none opacity-30" />
       
       <div className="mx-auto max-w-content relative z-10 w-full">
-        <div className="max-w-4xl">
-          {/* Chip */}
-          <Badge variant="default" className="mb-8">
-            For SaaS founders on Stripe Billing
-          </Badge>
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="max-w-2xl">
+            {/* Chip */}
+            <Badge variant="outline" className="mb-6">
+              For SaaS founders on Stripe Billing
+            </Badge>
 
-          {/* H1 - Large, asymmetric, left-aligned with Doto display font */}
-          <h1 className="font-display text-display-xl md:text-[96px] md:leading-[0.95] font-medium text-text-display mb-8 tracking-tight">
-            Know why they cancel — before they disappear.
-          </h1>
+            {/* H1 - Huge serif headline */}
+            <h1 className="font-display text-display-xl lg:text-[96px] lg:leading-[0.95] font-normal mb-6">
+              Know why they cancel — before they disappear.
+            </h1>
 
-          {/* Subhead - Keep money version */}
-          <p className="font-body text-subheading md:text-heading text-text-secondary leading-relaxed mb-12 max-w-2xl">
-            See why subscribers cancel or go quiet, then approve the save before anything sends. Built for founders who bill on Stripe — your Resend, your call. Independent product, not made by Stripe.
-          </p>
+            {/* Subhead */}
+            <p className="font-body text-subheading text-muted-foreground leading-relaxed mb-10 max-w-xl">
+              Signal classifies Stripe churn, drafts personalized saves, and sends after your approval. We send from our Resend. Reply-to goes to you. Independent product, not made by Stripe.
+            </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-start gap-4 mb-10">
-            <Link href="/scan">
-              <Button variant="primary" size="lg">
-                See who&apos;s leaving — and why
-              </Button>
-            </Link>
-            <a href="#founding">
-              <Button variant="secondary" size="lg">
-                Apply for founding — keep 50% off for 90 days after first successful enroll
-              </Button>
-            </a>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row items-start gap-4 mb-8">
+              <Link href="/scan">
+                <Button variant="default" size="lg" className="rounded-full">
+                  See who&apos;s leaving — and why
+                </Button>
+              </Link>
+            </div>
+
+            {/* Trust line */}
+            <p className="font-mono text-label uppercase tracking-[0.05em] text-muted-foreground">
+              You approve every save. We send it. Reply-to goes to you.
+            </p>
           </div>
 
-          {/* Trust line */}
-          <p className="font-mono text-caption uppercase tracking-[0.06em] text-text-disabled">
-            You approve every save · Your Resend segments · No auto-sends
-          </p>
+          {/* ASCII Sphere */}
+          <div className="hidden lg:flex items-center justify-center">
+            <div className="relative w-full max-w-md aspect-square">
+              <AnimatedSphere />
+            </div>
+          </div>
         </div>
       </div>
     </section>

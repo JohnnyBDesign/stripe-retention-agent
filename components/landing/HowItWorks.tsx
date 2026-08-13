@@ -15,12 +15,12 @@ export default function HowItWorks() {
     {
       number: '3',
       title: 'You approve',
-      description: 'Draft appears in your HITL queue with classified reason, suggested playbook, and Resend segment',
+      description: 'Draft appears in your approval queue with classified reason and suggested template',
     },
     {
       number: '4',
-      title: 'Resend enrolls',
-      description: 'After approval, Signal enrolls the customer via Resend API (segments, not tags)',
+      title: 'We send it',
+      description: 'After approval, Signal sends from our Resend. Reply-to is set to you. No ESP key needed from you.',
     },
   ];
 
@@ -28,11 +28,11 @@ export default function HowItWorks() {
     <section className="relative py-20 px-6 md:px-8" id="how">
       <div className="mx-auto max-w-content">
         <div className="mb-16">
-          <h2 className="font-display text-display-md text-text-display mb-4 font-medium">
+          <h2 className="font-display text-display-md mb-4 font-normal">
             How it works
           </h2>
-          <p className="font-body text-subheading text-text-secondary">
-            Four steps from churn to playbook enrollment
+          <p className="font-body text-subheading text-muted-foreground">
+            Four steps from churn to save
           </p>
         </div>
 
@@ -40,15 +40,15 @@ export default function HowItWorks() {
           {steps.map((step) => (
             <Card 
               key={step.number}
-              className="p-8 bg-black border-border hover:border-border-visible transition"
+              className="p-8 hover:border-foreground/20 transition"
             >
-              <div className="w-12 h-12 rounded-technical bg-text-display text-black font-display font-bold text-xl flex items-center justify-center mb-6">
+              <div className="w-12 h-12 rounded-md bg-primary text-primary-foreground font-display font-normal text-xl flex items-center justify-center mb-6">
                 {step.number}
               </div>
-              <h3 className="font-body text-heading text-text-display mb-3 font-medium">
+              <h3 className="font-body text-heading mb-3 font-semibold">
                 {step.title}
               </h3>
-              <p className="font-body text-body-sm text-text-secondary leading-relaxed">
+              <p className="font-body text-body text-muted-foreground leading-relaxed">
                 {step.description}
               </p>
             </Card>

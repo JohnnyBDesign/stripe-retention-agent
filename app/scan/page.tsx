@@ -158,7 +158,7 @@ export default function ScanPage() {
                 <Button
                   type="submit"
                   disabled={loading || !stripeKey}
-                  variant="primary"
+                  variant="default"
                   size="lg"
                   className="w-full"
                 >
@@ -281,12 +281,12 @@ export default function ScanPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link href="/#pricing">
-                    <Button variant="primary" size="lg">
+                    <Button variant="default" size="lg">
                       See pricing
                     </Button>
                   </Link>
                   <Link href="/queue">
-                    <Button variant="secondary" size="lg">
+                    <Button variant="outline" size="lg">
                       View demo queue
                     </Button>
                   </Link>
