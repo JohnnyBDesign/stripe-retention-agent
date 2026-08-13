@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyQueueAuth, createSessionCookie, requiresAuth } from '@/lib/queue-auth';
 
 export async function GET(req: NextRequest) {
-  const queueSecret = process.env.QUEUE_SECRET || process.env.HITL_PASS;
+  const authenticated = verifyQueueAuth(req);
   
-  if (!queueSecret) {
-    return NextResponse.json({ requiresAuth: false, authenticated: true });
-  }
-
-  const keyParam = req.headers.get('x-queue-key');
-  
-  if (keyParam === queueSecret) {
-    return NextResponse.json({ requiresAuth: true, authenticated: true });
-  }
-
-  return NextResponse.json({ requiresAuth: true, authenticated: false });
+  return NextResponse.json({
+    requiresAuth: requiresAuth(),
+    authenticated,
+  });
 }
 
 export async function POST(req: NextRequest) {
   const queueSecret = process.env.QUEUE_SECRET || process.env.HITL_PASS;
   
+  // FAIL CLOSED: If no secret is configured, authentication always fails
   if (!queueSecret) {
-    return NextResponse.json({ success: true });
+    return NextResponse.json(
+      { error: 'Queue authentication is not configured. Contact system administrator.' },
+      { status: 503 }
+    );
   }
 
   try {
@@ -28,7 +26,9 @@ export async function POST(req: NextRequest) {
     const { password } = body;
 
     if (password === queueSecret) {
-      return NextResponse.json({ success: true });
+      const response = NextResponse.json({ success: true });
+      response.headers.set('Set-Cookie', createSessionCookie(queueSecret));
+      return response;
     }
 
     return NextResponse.json({ error: 'Invalid password' }, { status: 401 });

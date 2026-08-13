@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { verifyQueueAuth, unauthorizedResponse } from '@/lib/queue-auth';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Protect queue data - must be authenticated
+  if (!verifyQueueAuth(req)) {
+    return unauthorizedResponse();
+  }
+
   try {
     const retentionCase = await prisma.retentionCase.findUnique({
       where: { id: params.id },
@@ -34,6 +40,11 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Protect queue mutations - must be authenticated
+  if (!verifyQueueAuth(req)) {
+    return unauthorizedResponse();
+  }
+
   try {
     const body = await req.json();
     const { state, overrideReason, subjectDraft, bodyDraft, snoozeUntil } = body;
@@ -72,17 +83,18 @@ export async function PATCH(
 
     if (state === 'approved' || state === 'edited_approved') {
       const effectiveReason = updated.overrideReason || updated.reason;
-      const { enrollInResend, getTagForReason } = await import('@/lib/resend/client');
+      const { sendRetentionEmail, shouldSendForReason } = await import('@/lib/resend/send-email');
       
       try {
-        const tag = getTagForReason(effectiveReason as any);
-        if (!tag) {
-          console.log(`No segment enroll for reason=${effectiveReason}`);
+        // Check if this reason should trigger an email send
+        if (!shouldSendForReason(effectiveReason as any)) {
+          console.log(`No email send for reason=${effectiveReason} (display-only)`);
           return NextResponse.json({
             ...updated,
             evidence: updated.evidence as string[],
           });
         }
+        
         if (!updated.customerEmail) {
           console.log(`No customerEmail for case ${updated.id}`);
           return NextResponse.json({
@@ -93,36 +105,44 @@ export async function PATCH(
         
         const triggerEventId = updated.stripeEventIds[0] || updated.id;
         
-        const existingEnrollment = await prisma.resendEnrollment.findFirst({
+        // Check for idempotency - have we already sent an email for this case/event?
+        const existingSend = await prisma.resendEnrollment.findFirst({
           where: {
             customerId: updated.customerId,
-            tag,
+            tag: effectiveReason,
             triggerEventId,
           },
         });
 
-        if (!existingEnrollment) {
-          const contactId = await enrollInResend(
-            updated.customerEmail,
-            effectiveReason as any
-          );
+        if (!existingSend) {
+          // Send the retention email from Signal's Resend account
+          const founderEmail = process.env.FOUNDER_EMAIL;
+          
+          const emailId = await sendRetentionEmail({
+            to: updated.customerEmail,
+            subject: updated.subjectDraft,
+            body: updated.bodyDraft,
+            founderEmail,
+          });
 
+          // Track that we sent this email (for idempotency)
           await prisma.resendEnrollment.create({
             data: {
               caseId: updated.id,
-              contactId,
+              contactId: emailId,
               customerId: updated.customerId,
-              tag,
-              tags: [tag],
+              tag: effectiveReason,
+              tags: [effectiveReason],
               triggerEventId,
             },
           });
-          console.log(`Enrolled ${updated.customerEmail} in segment ${tag}`);
+          
+          console.log(`Sent retention email to ${updated.customerEmail} (emailId: ${emailId}, reason: ${effectiveReason})`);
         } else {
-          console.log(`Enrollment already exists for customer ${updated.customerId} with segment ${tag}`);
+          console.log(`Email already sent for customer ${updated.customerId} with reason ${effectiveReason} and event ${triggerEventId}`);
         }
       } catch (error: any) {
-        console.error('Failed to enroll in Resend:', error);
+        console.error('Failed to send retention email:', error);
       }
     }
 
