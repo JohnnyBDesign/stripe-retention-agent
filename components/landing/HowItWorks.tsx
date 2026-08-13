@@ -24,8 +24,16 @@ export default function HowItWorks() {
 
   return (
     <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="how">
-      {/* Atmospheric backdrop */}
-      <div className="absolute inset-0 bg-gradient-to-bl from-surface/20 via-canvas to-canvas pointer-events-none opacity-40" />
+      {/* Oil painting backdrop with dark overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/backdrops/how.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div className="absolute inset-0 bg-black/70 pointer-events-none" />
       
       <div className="mx-auto max-w-content relative z-10">
         <div className="text-center mb-16">
