@@ -1,98 +1,77 @@
-# Signal Product Requirements
+# Signal — Product Requirements
 
-## Product Wedge
-Signal is a churn agent for B2B SaaS with Stripe subscriptions. It classifies cancel reasons, drafts retention emails, and waits for human approval before enrolling customers in Resend playbooks.
+**Locked overnight 2026-08-12 (Johnny / Revenue Lead).** Name: **Signal**.
 
-**Not a cancel widget. Not auto-send. HITL-first.**
+## Wedge
 
-## Core Value Props
-1. **Classification**: LLM + context → `ret_price`, `ret_bugs`, `ret_competitor`, `ret_never_activated`, `silent_rescue`
-2. **HITL Approval**: Every enroll requires human review (like a teammate)
-3. **Resend Segments**: Enrolls into segments (not tags)
-4. **No Auto-Sends**: Draft first, approve second, send third
+Stripe-native churn agent: classify **why** they cancel → human **approves** the draft → **Signal sends** the email from **Signal's Resend**.
 
-## CTAs (Locked)
-Primary: **"Start with Stripe keys → get your first HITL card"**
+- **Stripe required.** Onboarding = Stripe only (restricted key + webhooks).
+- **Customers never provide a Resend (or any ESP) API key.** $99 / $249 **includes sending**.
+- **From:** Signal's Resend. **Reply-To:** founder email. We do **not** run a recovery inbox.
+- **HITL is the gate.** No auto-send. Approve / Edit & approve / Reject / Snooze.
+- **Scan** (`/scan`) is **free**. Paste read-only restricted key; never stored.
+- **Not a cancel widget.** Not SaveMRR. Not $19. No fake recovery %.
 
-Secondary: **"Apply for founding — 50% off 90 days after first successful enroll"**
+## What we sell
 
-## Pricing (Locked)
-- **Starter**: $99/mo
-  - ≤100 approved enrolls/mo
-  - 1 HITL seat
-  - Resend segments
-  - Email support
+1. **Reason brain** — taxonomy: `price` · `bug` · `missing_feature` · `competitor` · `never_activated` · `silent_rescue` · `other` (`ret_*` = internal codes only).
+2. **Approve-then-send** — HITL card, then Signal sends the approved subject/body.
+3. **Leak scan** — 60s `/scan`: $ leaking / 90d + why they **canceled** (when Stripe has a reason).
 
-- **Growth**: $249/mo (highlighted)
-  - ≤500 approved enrolls/mo
-  - 3 HITL seats
-  - **Priority support**
-  - Resend segments
+## CTAs (locked)
 
-**Founding discount**: 50% off for 90 days after first successful enroll
-**Annual**: 2 months free
+| Surface | Copy | Dest |
+| Primary (hero / nav) | **See who's leaving — and why** | `/scan` |
+| After scan | **Get these in a queue you approve** | Stripe onboard / `/queue` |
+| Secondary | **Apply for founding — 50% off 90 days after first successful send** | `#pricing` |
 
-## Copy Guidelines
+Queue is **gated**. Do not put "HITL card" or "Stripe keys" in the hero CTA. Do not ask for a Resend key anywhere.
 
-### Voice & Tone
-- **Technical, not cute**: Speak to engineers and technical founders
-- **Soft claims only**: "Signal understands why they're leaving" not "Signal saves 40% of churn"
-- **No fake metrics**: Real data or no data
-- **Direct, not salesy**: No "revolutionary" or "game-changing"
+## Pricing (locked)
 
-### Terms to Use
-- HITL (Human-in-the-loop)
-- Segments (not tags)
-- Churn agent (not "churn prevention tool")
-- Approve/enroll (not "activate" or "trigger")
-- Classification (not "detection" or "analysis")
+Scan is free.
 
-### Terms to Avoid
-- Cancel widget
-- Auto-send / Automatic
-- AI-powered (implied, not stated)
-- Revolutionary / Game-changing
-- Tags (use "segments")
-- Save rate / Retention rate (unless real data)
+- **Starter — $99/mo** — ≤100 **approved sends**/mo · 1 HITL seat · Email support
+- **Growth — $249/mo** — ≤500 **approved sends**/mo · 3 HITL seats · **Priority support** (same 4h/1d product SLA)
+- **Founding:** 50% off for 90 days after **first successful send**
+- **Annual:** 2 months free
+- Flat fee. No rev-share. No $19 race.
 
-## Anti-References (Banned Elements)
+## `/scan` (free)
 
-### Visual
-- ❌ Mascot (face.svg, face.png, rainbow arcs)
-- ❌ Cute illustrations for B2B SaaS
-- ❌ Purple gradients
-- ❌ Glassmorphism
-- ❌ 3D elements or depth effects
+- Restricted **read** key (`rk_…`): Customers, Subscriptions, Invoices, Events. In-memory for the request only.
+- Report: hero **$X leaking / 90d**; split **failed / cancel / downgrade / leaving-soon**; **why they left $** on classified **voluntary cancels** only.
+- **Failed-payment $:** shown, caption "Stripe retries; not Signal v0." Never CTA recover failed payments.
+- **Silent / never-activated:** **omitted** (need usage signal post-connect). Do not fake from Stripe-only.
+- Write keys rejected. Rate-limited. No HITL rows, no send, no key persistence.
 
-### Copy
-- ❌ "Meet [mascot name]"
-- ❌ Fake testimonials
-- ❌ Made-up metrics
-- ❌ "Join 10,000+ companies" (unless true)
+## HITL + send (paid)
 
-### UX
-- ❌ Pulsing notification dots
-- ❌ Pop-up modals on landing
-- ❌ Auto-play videos
-- ❌ Chatbot widgets on first visit
+Webhook path: `customer.subscription.deleted/updated` (cancel / `cancel_at_period_end`), refunds → classify → queue. SLA 4h cancel/refund, 1 business day silent.
 
-## Logo Requirements
-**Text-only wordmark: "Signal"**
+On **Approve / Edit & approve:** send the draft via **Signal Resend**, `Reply-To` = founder. Idempotent per case. Reject/Snooze = no send. SLA breach = escalate, **no auto-send**.
 
-No icon. No mascot. No face. No decorative elements.
+`invoice.payment_failed` = no retention card (dunning stays Stripe).
 
-Clean, readable, in primary font (Geist Sans or Inter), semibold weight.
+## Hard out of scope
 
-## Marketing Page Structure
-1. **Nav**: Logo (text), Product/How/Pricing links, CTA button
-2. **Hero**: H1 "Signal" (text only), subhead, 2 CTAs, trust line
-3. **Product Window**: macOS-style HITL card preview
-4. **Why Us**: HITL approval explanation
-5. **How It Works**: 4 steps (Stripe fires → classify → approve → enroll)
-6. **Reasons**: Classified reason tags (no mascot icons)
-7. **Pricing**: 2 plans, transparent, founding discount note
-8. **Final CTA**: "Get your first HITL card this week"
-9. **Footer**: Text logo, product/company/legal links
+- Cancel-button UI / JS intercept / Cancel Shield clone
+- Customer-provided Resend / Customer.io / Loops keys (BYO ESP **dead**)
+- Recovery inbox / we own the reply thread (replies go to founder)
+- Fake stats, spots-left, "55% recovery", $19
+- Auto-send without HITL
+- Treating failed payments as the save product
 
-## /queue Page
-Keep functional. Apply same design tokens (canvas, surface, line, ink). No mascot references.
+## Later (not this sale)
+
+Why dashboard (logged-in) · apply coupon/pause in Stripe **after** approve · silent rescue via activity · win-back (still HITL send).
+
+## Copy
+
+**Use:** Signal, approve, send, replies to you, scan, why they canceled, leaking MRR.  
+**Kill:** your Resend, BYO ESP, enroll `ret_*` / segments as the product, "no emails from our domain," cancel widget, auto-send, fake metrics.
+
+Voice: technical, founder-to-founder. Soft claims. Real numbers from **this** Stripe key only.
+
+Done when PRODUCT.md on the PR matches this and CI is green.
