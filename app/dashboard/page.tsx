@@ -265,38 +265,39 @@ export default function DashboardPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-background p-8">Loading...</div>;
+    return <div className="min-h-screen bg-canvas p-8 text-white">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b border-border bg-muted/30">
+    <div className="min-h-screen bg-canvas">
+      <div className="border-b border-border/50 bg-panel/30">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-semibold">Signal</Link>
-            <nav className="flex gap-4">
+            <Link href="/" className="font-body text-[18px] font-medium text-white">Signal</Link>
+            <nav className="flex gap-1 items-center">
               <button
                 onClick={() => setView('queue')}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  view === 'queue' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                className={`px-3 py-2 font-nav text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                  view === 'queue' ? 'text-white' : 'text-white/70 hover:text-white'
                 }`}
               >
-                Queue
+                QUEUE
               </button>
+              <span className="text-white/30">·</span>
               <button
                 onClick={() => setView('settings')}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  view === 'settings' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                className={`px-3 py-2 font-nav text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                  view === 'settings' ? 'text-white' : 'text-white/70 hover:text-white'
                 }`}
               >
-                Settings
+                SETTINGS
               </button>
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
+            <span className="font-body text-[14px] text-muted-foreground">{user?.email}</span>
             <Button onClick={handleLogout} variant="ghost" size="sm">
-              Logout
+              LOGOUT
             </Button>
           </div>
         </div>
@@ -304,11 +305,11 @@ export default function DashboardPage() {
 
       {view === 'settings' ? (
         <div className="max-w-4xl mx-auto px-6 py-12">
-          <h1 className="text-3xl font-semibold mb-8">Settings</h1>
+          <h1 className="font-body text-[36px] font-normal tracking-tight text-white mb-8">Settings</h1>
 
           <div className="space-y-8">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Profile</h2>
+            <Card className="p-6 bg-panel border-border/50 rounded-sm">
+              <h2 className="font-body text-[24px] font-normal text-white mb-4">Profile</h2>
               <form onSubmit={handleSaveSettings} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
@@ -366,8 +367,8 @@ export default function DashboardPage() {
               </form>
             </Card>
 
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Stripe Connection</h2>
+            <Card className="p-6 bg-panel border-border/50 rounded-sm">
+              <h2 className="font-body text-[24px] font-normal text-white mb-4">Stripe Connection</h2>
 
               {stripeConnection ? (
                 <div className="space-y-4">
@@ -421,14 +422,14 @@ export default function DashboardPage() {
       ) : !stripeConnection ? (
         <div className="max-w-4xl mx-auto px-6 py-20 text-center">
           <div className="mb-8">
-            <h1 className="text-3xl font-semibold mb-4">Welcome to Signal</h1>
-            <p className="text-lg text-muted-foreground mb-8">
+            <h1 className="font-body text-[36px] font-normal tracking-tight text-white mb-4">Welcome to Signal</h1>
+            <p className="font-body text-[18px] text-muted-foreground mb-8">
               Connect your Stripe account to start receiving retention cases
             </p>
           </div>
 
-          <Card className="p-8 max-w-md mx-auto">
-            <h2 className="text-xl font-semibold mb-4">Connect Stripe</h2>
+          <Card className="p-8 max-w-md mx-auto bg-panel border-border/50 rounded-sm">
+            <h2 className="font-body text-[24px] font-normal text-white mb-4">Connect Stripe</h2>
             <form onSubmit={handleConnectStripe} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-left">Stripe Restricted API Key</label>
@@ -458,37 +459,37 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="flex h-[calc(100vh-73px)]">
-          <div className="w-1/3 border-r border-border overflow-y-auto">
-            <div className="p-4 border-b border-border bg-muted/50">
-              <h2 className="text-lg font-semibold mb-1">Your Queue</h2>
-              <p className="text-sm text-muted-foreground">{cases.length} pending cases</p>
+          <div className="w-1/3 border-r border-border/50 overflow-y-auto bg-panel/30">
+            <div className="p-4 border-b border-border/50 bg-panel/50">
+              <h2 className="font-body text-[18px] font-medium text-white mb-1">Your Queue</h2>
+              <p className="font-body text-[14px] text-muted-foreground">{cases.length} pending cases</p>
             </div>
             
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border/50">
               {cases.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground">
-                  <p>No pending cases</p>
-                  <p className="text-sm mt-2">Cases will appear here when customers cancel</p>
+                  <p className="font-body">No pending cases</p>
+                  <p className="font-body text-[14px] mt-2">Cases will appear here when customers cancel</p>
                 </div>
               ) : (
                 cases.map((c) => (
                   <div
                     key={c.id}
                     onClick={() => selectCase(c)}
-                    className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
-                      selectedCase?.id === c.id ? 'bg-muted/50 border-l-2 border-foreground' : ''
+                    className={`p-4 cursor-pointer hover:bg-panel/50 transition-colors ${
+                      selectedCase?.id === c.id ? 'bg-panel/50 border-l-2 border-mint' : ''
                     }`}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium">{c.customerEmail}</p>
-                        <p className="text-sm text-muted-foreground">{c.plan}</p>
+                        <p className="font-body font-medium text-white">{c.customerEmail}</p>
+                        <p className="font-body text-[14px] text-muted-foreground">{c.plan}</p>
                       </div>
-                      <span className="px-2 py-1 text-xs rounded-md border border-border font-mono">
+                      <span className="px-2 py-1 text-[10px] rounded-sm border border-border/50 font-nav uppercase tracking-wider text-muted-foreground">
                         {c.reason}
                       </span>
                     </div>
-                    <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
+                    <div className="mt-2 flex gap-4 font-body text-[12px] text-muted-foreground">
                       <span>${c.mrr.toFixed(2)} MRR</span>
                       <span>{c.tenureDays}d tenure</span>
                       <span>{Math.round(c.confidence * 100)}% conf</span>
@@ -503,8 +504,8 @@ export default function DashboardPage() {
             {selectedCase ? (
               <div className="p-8">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-semibold mb-2">{selectedCase.customerEmail}</h2>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
+                  <h2 className="font-body text-[28px] font-normal tracking-tight text-white mb-2">{selectedCase.customerEmail}</h2>
+                  <div className="flex gap-4 font-body text-[14px] text-muted-foreground">
                     <span>Customer ID: {selectedCase.customerId}</span>
                     <span>Plan: {selectedCase.plan}</span>
                     <span>${selectedCase.mrr.toFixed(2)} MRR</span>
