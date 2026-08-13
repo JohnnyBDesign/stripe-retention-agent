@@ -188,13 +188,13 @@ export default function ScanPage() {
                 </p>
               </div>
 
-              {/* Four Scan Buckets */}
+              {/* Four Scan Buckets: Failed / Cancel / Downgrade / Leaving-Soon */}
               <div className="grid grid-cols-2 gap-3 mb-12">
                 <div className="bg-surface border border-line rounded-2xl p-5">
                   <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.voluntary.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Voluntary</div>
+                  <div className="text-xs text-ink-dim">Cancel</div>
                 </div>
                 <div className="bg-surface border border-line rounded-2xl p-5">
                   <div className="text-2xl font-bold text-ink mb-1">
@@ -208,15 +208,15 @@ export default function ScanPage() {
                   </div>
                   <div className="text-xs text-ink-dim">Downgrade</div>
                 </div>
-                <div className="bg-panel border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink-subdued mb-1">
+                <div className="bg-surface border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.involuntary.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-subdued">Involuntary</div>
+                  <div className="text-xs text-ink-dim">Failed</div>
                 </div>
               </div>
 
-              {/* Why-Pie: Why They Left (Voluntary Classified $ Only) */}
+              {/* Why They Left - Classified Voluntary Cancels Only */}
               <div className="bg-surface border border-line rounded-3xl p-8 mb-8">
                 <h2 className="text-xl font-semibold text-ink mb-6">Why they left</h2>
                 
@@ -248,29 +248,27 @@ export default function ScanPage() {
                     No cancellation reasons detected in the scanned period.
                   </p>
                 )}
-                
-                {/* Activity signal note */}
-                <div className="mt-6 pt-6 border-t border-line">
-                  <p className="text-xs text-ink-subdued">
-                    Silent renewers need a usage signal — connect activity after you start.
-                  </p>
-                </div>
               </div>
 
-              {/* Involuntary Note - Display Only */}
-              {result.breakdown.involuntary > 0 && (
-                <div className="bg-panel border border-line rounded-2xl p-5 mb-8">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-ink-subdued">Failed payments</span>
-                    <span className="text-lg font-semibold text-ink-subdued">
-                      ${result.breakdown.involuntary.toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-ink-subdued">
-                    Failed payments — Stripe retries; not Signal v0.
-                  </p>
+              {/* Failed Payments Note - Display Only */}
+              <div className="bg-panel border border-line rounded-2xl p-5 mb-8">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-ink-dim">Failed payments — display only</span>
+                  <span className="text-lg font-semibold text-ink">
+                    ${result.breakdown.involuntary.toLocaleString()}
+                  </span>
                 </div>
-              )}
+                <p className="text-xs text-ink-subdued">
+                  Failed payments — Stripe retries; not Signal v0.
+                </p>
+              </div>
+
+              {/* Optional Activity Signal Note */}
+              <div className="bg-surface border border-line rounded-2xl p-4 mb-8">
+                <p className="text-xs text-ink-subdued text-center">
+                  Silent renewers need a usage signal — connect activity after you start.
+                </p>
+              </div>
 
               {/* Post-Scan CTA */}
               <div className="bg-gradient-to-br from-surface to-panel border border-line rounded-3xl p-8 text-center">
