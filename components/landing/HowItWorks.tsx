@@ -1,3 +1,5 @@
+import { Card } from '@/components/ui/card';
+
 export default function HowItWorks() {
   const steps = [
     {
@@ -23,38 +25,33 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="how">
-      {/* Oil painting backdrop with dark overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: 'url(/backdrops/how.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div className="absolute inset-0 bg-black/70 pointer-events-none" />
-      
-      <div className="mx-auto max-w-content relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
+    <section className="relative py-20 px-6 md:px-8" id="how">
+      <div className="mx-auto max-w-content">
+        <div className="mb-16">
+          <h2 className="font-display text-display-md text-text-display mb-4 font-medium">
             How it works
           </h2>
-          <p className="text-xl text-ink-dim">Four steps from churn to playbook enrollment</p>
+          <p className="font-body text-subheading text-text-secondary">
+            Four steps from churn to playbook enrollment
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {steps.map((step) => (
-            <div 
+            <Card 
               key={step.number}
-              className="bg-surface rounded-3xl p-8 border border-line hover:border-line-hover transition"
+              className="p-8 bg-black border-border hover:border-border-visible transition"
             >
-              <div className="w-12 h-12 rounded-pill bg-white text-black font-bold text-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-technical bg-text-display text-black font-display font-bold text-xl flex items-center justify-center mb-6">
                 {step.number}
               </div>
-              <h3 className="text-2xl font-bold text-ink mb-3">{step.title}</h3>
-              <p className="text-ink-dim leading-relaxed">{step.description}</p>
-            </div>
+              <h3 className="font-body text-heading text-text-display mb-3 font-medium">
+                {step.title}
+              </h3>
+              <p className="font-body text-body-sm text-text-secondary leading-relaxed">
+                {step.description}
+              </p>
+            </Card>
           ))}
         </div>
       </div>
