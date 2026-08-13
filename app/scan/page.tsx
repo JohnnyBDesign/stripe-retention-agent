@@ -9,6 +9,7 @@ type ScanResult = {
     failedPayments: number;
     cancellations: number;
     downgrades: number;
+    silent: number;
   };
   reasonBreakdown: Record<string, number>;
   scannedAt: string;
@@ -90,34 +91,34 @@ export default function ScanPage() {
                   See who&apos;s leaving — and why
                 </h1>
                 <p className="text-lg text-ink-dim leading-relaxed">
-                  Scan 90 days of Stripe data in 60 seconds. Your key is never stored — we use it in-memory only to call Stripe, then drop it.
+                  60 seconds. Restricted read key. Never stored.
                 </p>
               </div>
 
               {/* Required Permissions */}
               <div className="bg-surface border border-line rounded-3xl p-6 mb-8">
-                <h2 className="text-sm font-semibold text-ink mb-3">Required Permissions (Read-Only)</h2>
+                <h2 className="text-sm font-semibold text-ink mb-3">Restricted Read Only</h2>
                 <ul className="space-y-2 text-sm text-ink-dim">
                   <li className="flex items-center gap-2">
                     <span className="text-status-green">✓</span>
-                    Customers Read
+                    Customers
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-status-green">✓</span>
-                    Subscriptions Read
+                    Subscriptions
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-status-green">✓</span>
-                    Invoices Read
+                    Invoices
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-status-green">✓</span>
-                    Events Read
+                    Events
                   </li>
                 </ul>
                 <div className="mt-4 pt-4 border-t border-line">
                   <p className="text-xs text-ink-subdued">
-                    Create a restricted key at{' '}
+                    Never persisted. Never logged. Create at{' '}
                     <a 
                       href="https://dashboard.stripe.com/apikeys/create?type=restricted" 
                       target="_blank" 
@@ -126,7 +127,6 @@ export default function ScanPage() {
                     >
                       dashboard.stripe.com/apikeys/create
                     </a>
-                    {' '}with these read-only permissions. No signup required for this scan.
                   </p>
                 </div>
               </div>
@@ -135,7 +135,7 @@ export default function ScanPage() {
               <form onSubmit={handleScan} className="space-y-6">
                 <div>
                   <label htmlFor="stripeKey" className="block text-sm font-medium text-ink mb-2">
-                    Paste your Stripe restricted key
+                    Paste your restricted key
                   </label>
                   <input
                     id="stripeKey"
@@ -163,14 +163,14 @@ export default function ScanPage() {
                   disabled={loading || !stripeKey}
                   className="w-full px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Scanning your Stripe...' : 'Scan my Stripe'}
+                  {loading ? 'Scanning 90 days...' : 'Scan 90 days'}
                 </button>
               </form>
 
               {/* Trust indicators */}
               <div className="mt-8 text-center">
                 <p className="text-xs text-ink-subdued">
-                  No account required · Key never stored · Results shown instantly
+                  Independent product, not made by Stripe
                 </p>
               </div>
             </>
@@ -182,55 +182,61 @@ export default function ScanPage() {
                   Scanned {new Date(result.scannedAt).toLocaleDateString()}
                 </div>
                 
-                <h1 className="text-6xl md:text-7xl font-bold text-ink mb-4">
+                <h1 className="text-6xl md:text-7xl font-bold text-ink mb-2">
                   ${result.totalLeakage.toLocaleString()}
                 </h1>
                 <p className="text-xl text-ink-dim">
-                  leaking in the last 90 days
+                  leaking / 90d
                 </p>
               </div>
 
-              {/* Breakdown Cards */}
-              <div className="grid grid-cols-3 gap-4 mb-12">
-                <div className="bg-surface border border-line rounded-2xl p-4 text-center">
+              {/* Four Split Tiles */}
+              <div className="grid grid-cols-2 gap-3 mb-12">
+                <div className="bg-surface border border-line rounded-2xl p-5">
                   <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.failedPayments.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Failed Payments</div>
+                  <div className="text-xs text-ink-dim">Failed</div>
                 </div>
-                <div className="bg-surface border border-line rounded-2xl p-4 text-center">
+                <div className="bg-surface border border-line rounded-2xl p-5">
                   <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.cancellations.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Cancellations</div>
+                  <div className="text-xs text-ink-dim">Cancel</div>
                 </div>
-                <div className="bg-surface border border-line rounded-2xl p-4 text-center">
+                <div className="bg-surface border border-line rounded-2xl p-5">
                   <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.downgrades.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Downgrades</div>
+                  <div className="text-xs text-ink-dim">Downgrade</div>
+                </div>
+                <div className="bg-surface border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink mb-1">
+                    ${result.breakdown.silent.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-ink-dim">Silent</div>
                 </div>
               </div>
 
-              {/* Why They Left */}
+              {/* Why They Left - Compact Bars */}
               <div className="bg-surface border border-line rounded-3xl p-8 mb-8">
                 <h2 className="text-xl font-semibold text-ink mb-6">Why they left</h2>
                 
                 {Object.entries(result.reasonBreakdown).length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {Object.entries(result.reasonBreakdown)
                       .sort(([, a], [, b]) => b - a)
                       .map(([reason, amount]) => {
                         const percentage = (amount / result.totalLeakage) * 100;
                         return (
-                          <div key={reason} className="space-y-2">
+                          <div key={reason} className="space-y-1.5">
                             <div className="flex items-center justify-between text-sm">
                               <span className="text-ink-dim">{REASON_LABELS[reason] || reason}</span>
                               <span className="font-semibold text-ink">${amount.toLocaleString()}</span>
                             </div>
-                            <div className="h-2 bg-panel rounded-full overflow-hidden">
+                            <div className="h-1.5 bg-panel rounded-full overflow-hidden">
                               <div 
-                                className="h-full bg-white rounded-full transition-all"
+                                className="h-full bg-ink rounded-full transition-all"
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
@@ -240,18 +246,18 @@ export default function ScanPage() {
                   </div>
                 ) : (
                   <p className="text-ink-dim text-center py-8">
-                    No cancellation reasons detected in the scanned period.
+                    No churn reasons detected in the scanned period.
                   </p>
                 )}
               </div>
 
-              {/* CTA */}
+              {/* Post-Scan CTA */}
               <div className="bg-gradient-to-br from-surface to-panel border border-line rounded-3xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-ink mb-3">
-                  Approve saves in Signal
+                  Get these in a queue you approve
                 </h3>
                 <p className="text-ink-dim mb-6 max-w-lg mx-auto">
-                  Let Signal classify every cancel, draft the keep-money save, and send it through your Resend — after you approve. No auto-sends. No cancel widgets.
+                  Signal classifies every cancel, drafts the save, and sends through your Resend — after you approve. No auto-sends.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link 

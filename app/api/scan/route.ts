@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
       failedPayments: 0,
       cancellations: 0,
       downgrades: 0,
+      silent: 0,
     };
 
     // Track reasons with dollar amounts
@@ -173,6 +174,12 @@ export async function POST(request: NextRequest) {
       // Classify the cancellation reason
       const comment = sub.cancellation_details?.comment;
       const reason = classifyCancelReason(sub.cancellation_details, comment);
+      
+      // Track silent separately
+      if (reason === 'silent_rescue') {
+        leakage.silent += subMRR;
+      }
+      
       reasonBreakdown[reason] += subMRR;
     }
 
@@ -196,6 +203,12 @@ export async function POST(request: NextRequest) {
         // Classify the cancellation reason
         const comment = sub.cancellation_details?.comment;
         const reason = classifyCancelReason(sub.cancellation_details, comment);
+        
+        // Track silent separately
+        if (reason === 'silent_rescue') {
+          leakage.silent += subMRR;
+        }
+        
         reasonBreakdown[reason] += subMRR;
       }
     }
@@ -238,7 +251,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate total leakage
-    const totalLeakage = leakage.failedPayments + leakage.cancellations + leakage.downgrades;
+    const totalLeakage = leakage.failedPayments + leakage.cancellations + leakage.downgrades + leakage.silent;
 
     // Return scan results
     return NextResponse.json({
@@ -247,6 +260,7 @@ export async function POST(request: NextRequest) {
         failedPayments: Math.round(leakage.failedPayments * 100) / 100,
         cancellations: Math.round(leakage.cancellations * 100) / 100,
         downgrades: Math.round(leakage.downgrades * 100) / 100,
+        silent: Math.round(leakage.silent * 100) / 100,
       },
       reasonBreakdown: Object.fromEntries(
         Object.entries(reasonBreakdown)
