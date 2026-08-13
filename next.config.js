@@ -6,7 +6,7 @@ const nextConfig = {
       {
         source: '/get-started',
         destination: '/scan',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/founding',

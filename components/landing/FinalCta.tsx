@@ -42,42 +42,43 @@ export default function FinalCta() {
     <section className="relative py-20 px-6 md:px-8" id="founding">
       <div className="mx-auto max-w-content">
         {!showForm ? (
-          <Card className="p-12 md:p-16 bg-surface border-border-visible text-center">
-            <h2 className="font-display text-display-md text-text-display mb-6 font-medium">
-              See why they cancel, approve the save
+          <Card className="p-12 md:p-16 text-center">
+            <h2 className="font-display text-display-md mb-6 font-normal">
+              See why they cancel, approve the send
             </h2>
-            <p className="font-body text-subheading text-text-secondary mb-10 max-w-2xl mx-auto">
-              Built for founders who bill on Stripe. You approve every save before anything sends — your Resend, your call. No auto-sends.
+            <p className="font-body text-subheading text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Built for founders who bill on Stripe. You approve every send. Sending included. Replies go to you. No ESP key needed.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/scan">
-                <Button variant="primary" size="lg">
+                <Button variant="default" size="lg" className="rounded-full">
                   See who&apos;s leaving — and why
                 </Button>
               </Link>
               <Button 
-                variant="secondary" 
+                variant="outline" 
                 size="lg"
                 onClick={() => setShowForm(true)}
+                className="rounded-full"
               >
-                Apply for founding — keep 50% off for 90 days after first successful enroll
+                Apply for founding — keep 50% off for 90 days after first successful send
               </Button>
             </div>
           </Card>
         ) : (
-          <Card className="p-12 md:p-16 bg-surface border-border-visible">
+          <Card className="p-12 md:p-16">
             <div className="max-w-2xl mx-auto">
-              <h2 className="font-display text-display-md text-text-display mb-6 font-medium text-center">
+              <h2 className="font-display text-display-md mb-6 font-normal text-center">
                 Apply for Founding
               </h2>
-              <p className="font-body text-subheading text-text-secondary mb-10 text-center">
-                Keep 50% off for 90 days after your first successful enroll.
+              <p className="font-body text-subheading text-muted-foreground mb-10 text-center">
+                Keep 50% off for 90 days after your first successful send.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="founding-name" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                  <label htmlFor="founding-name" className="block font-mono text-label uppercase tracking-[0.05em] text-text-primary mb-2">
                     Name
                   </label>
                   <Input
@@ -91,7 +92,7 @@ export default function FinalCta() {
                 </div>
 
                 <div>
-                  <label htmlFor="founding-email" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                  <label htmlFor="founding-email" className="block font-mono text-label uppercase tracking-[0.05em] text-text-primary mb-2">
                     Email
                   </label>
                   <Input
@@ -105,7 +106,7 @@ export default function FinalCta() {
                 </div>
 
                 <div>
-                  <label htmlFor="founding-company" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                  <label htmlFor="founding-company" className="block font-mono text-label uppercase tracking-[0.05em] text-text-primary mb-2">
                     Company
                   </label>
                   <Input
@@ -119,7 +120,7 @@ export default function FinalCta() {
                 </div>
 
                 <div>
-                  <label htmlFor="founding-mrr" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+                  <label htmlFor="founding-mrr" className="block font-mono text-label uppercase tracking-[0.05em] text-text-primary mb-2">
                     Stripe MRR Band
                   </label>
                   <select
@@ -127,7 +128,7 @@ export default function FinalCta() {
                     required
                     value={formData.mrrBand}
                     onChange={(e) => setFormData({ ...formData, mrrBand: e.target.value })}
-                    className="w-full bg-black border border-border rounded-card px-4 py-3 font-body text-body text-text-primary focus:outline-none focus:ring-2 focus:ring-interactive focus:border-transparent"
+                    className="w-full bg-background border border-border rounded-md px-4 py-3 font-body text-body focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                   >
                     <option value="">Select MRR band</option>
                     <option value="<$1k">&lt;$1k</option>
@@ -143,7 +144,7 @@ export default function FinalCta() {
                 <div className="flex items-center gap-4 pt-4">
                   <Button 
                     type="submit" 
-                    variant="primary"
+                    variant="default"
                     disabled={status === 'sending'}
                   >
                     {status === 'sending' ? 'Submitting...' : 'Submit application'}
@@ -161,14 +162,14 @@ export default function FinalCta() {
                   </Button>
                   
                   {status === 'sent' && (
-                    <span className="font-mono text-caption uppercase tracking-[0.06em] text-success">
-                      [SENT]
+                    <span className="font-mono text-sm uppercase tracking-wider text-green-600">
+                      Sent
                     </span>
                   )}
                   
                   {status === 'error' && (
-                    <span className="font-mono text-caption uppercase tracking-[0.06em] text-error">
-                      [ERROR]
+                    <span className="font-mono text-sm uppercase tracking-wider text-destructive">
+                      Error
                     </span>
                   )}
                 </div>

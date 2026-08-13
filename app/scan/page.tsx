@@ -158,7 +158,7 @@ export default function ScanPage() {
                 <Button
                   type="submit"
                   disabled={loading || !stripeKey}
-                  variant="primary"
+                  variant="default"
                   size="lg"
                   className="w-full"
                 >
@@ -272,21 +272,21 @@ export default function ScanPage() {
               </Card>
 
               {/* Post-Scan CTA */}
-              <Card className="bg-surface border-border-visible p-8 text-center mb-8">
-                <h3 className="font-display text-display-md font-medium text-text-display mb-3">
+              <Card className="bg-card border-border p-8 text-center mb-8">
+                <h3 className="font-display text-display-md font-normal mb-3">
                   Get these in a queue you approve
                 </h3>
-                <p className="font-body text-body text-text-secondary mb-6 max-w-lg mx-auto">
-                  You approve. Signal sends. Replies go to you. $99/mo includes sending — 50% off for 90 days after first successful send.
+                <p className="font-body text-body text-muted-foreground mb-6 max-w-lg mx-auto">
+                  You approve. Signal sends. Replies go to you.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link href="/#pricing">
-                    <Button variant="primary" size="lg">
+                    <Button variant="default" size="lg">
                       See pricing
                     </Button>
                   </Link>
                   <Link href="/queue">
-                    <Button variant="secondary" size="lg">
+                    <Button variant="outline" size="lg">
                       View demo queue
                     </Button>
                   </Link>

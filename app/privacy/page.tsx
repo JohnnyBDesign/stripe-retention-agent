@@ -56,7 +56,7 @@ export default function PrivacyPage() {
               </h2>
               <p className="mb-4">
                 We use industry-standard encryption for data in transit and at rest. API keys are never logged 
-                or persisted. All communication with Stripe and Resend APIs happens over secure HTTPS connections.
+                or persisted. All communication with Stripe APIs happens over secure HTTPS connections.
               </p>
             </section>
 

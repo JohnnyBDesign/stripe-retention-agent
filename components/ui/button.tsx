@@ -3,30 +3,26 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap font-mono text-[13px] uppercase tracking-[0.06em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40',
+  'inline-flex items-center justify-center whitespace-nowrap font-body text-[15px] font-medium tracking-[-0.01em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        primary: 'bg-text-display text-black hover:bg-text-primary border-none',
-        secondary: 'bg-transparent border border-border-visible text-text-primary hover:border-text-primary',
-        ghost: 'bg-transparent border-none text-text-secondary hover:text-text-primary',
-        destructive: 'bg-transparent border border-accent text-accent hover:border-text-display hover:text-text-display',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-border bg-background hover:bg-accent hover:text-accent-foreground',
       },
       size: {
-        default: 'h-[44px] px-6 py-3',
-        sm: 'h-9 px-4',
-        lg: 'h-12 px-8',
+        default: 'h-10 px-5 py-2',
+        sm: 'h-9 px-4 text-[14px]',
+        lg: 'h-12 px-8 text-[16px]',
         icon: 'h-10 w-10',
-      },
-      shape: {
-        pill: 'rounded-pill',
-        technical: 'rounded-technical',
       },
     },
     defaultVariants: {
-      variant: 'primary',
+      variant: 'default',
       size: 'default',
-      shape: 'pill',
     },
   }
 );
@@ -38,10 +34,10 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, shape, ...props }, ref) => {
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <button
-        className={cn(buttonVariants({ variant, size, shape, className }))}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         {...props}
       />

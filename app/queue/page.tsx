@@ -124,41 +124,41 @@ function QueueContent() {
   };
 
   if (loading) {
-    return <div className="p-8 bg-canvas text-ink min-h-screen">Loading...</div>;
+    return <div className="p-8 bg-background min-h-screen">Loading...</div>;
   }
 
   return (
-    <div className="flex h-screen bg-canvas">
-      <div className="w-1/3 border-r border-line bg-surface overflow-y-auto">
-        <div className="p-4 border-b border-line bg-panel">
+    <div className="flex h-screen bg-background">
+      <div className="w-1/3 border-r border-border overflow-y-auto">
+        <div className="p-4 border-b border-border bg-muted/50">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-xl font-bold text-ink">HITL Queue</h1>
-            <Link href="/" className="text-sm text-ink-dim hover:text-ink transition-colors">
+            <h1 className="text-xl font-semibold">Approval Queue</h1>
+            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               ← Home
             </Link>
           </div>
-          <p className="text-sm text-ink-subdued">{cases.length} pending cases</p>
+          <p className="text-sm text-muted-foreground">{cases.length} pending cases</p>
         </div>
         
-        <div className="divide-y divide-line">
+        <div className="divide-y divide-border">
           {cases.map((c) => (
             <div
               key={c.id}
               onClick={() => selectCase(c)}
-              className={`p-4 cursor-pointer hover:bg-panel transition-colors ${
-                selectedCase?.id === c.id ? 'bg-panel border-l-2 border-white' : ''
+              className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
+                selectedCase?.id === c.id ? 'bg-muted/50 border-l-2 border-foreground' : ''
               }`}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium text-ink">{c.customerEmail}</p>
-                  <p className="text-sm text-ink-subdued">{c.plan}</p>
+                  <p className="font-medium">{c.customerEmail}</p>
+                  <p className="text-sm text-muted-foreground">{c.plan}</p>
                 </div>
-                <span className="px-2 py-1 text-xs rounded bg-status-green/20 text-status-green border border-status-green/30 font-mono">
+                <span className="px-2 py-1 text-xs rounded-md border border-border font-mono">
                   {c.reason}
                 </span>
               </div>
-              <div className="mt-2 flex gap-4 text-sm text-ink-subdued">
+              <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
                 <span>${c.mrr.toFixed(2)} MRR</span>
                 <span>{c.tenureDays}d tenure</span>
                 <span>{Math.round(c.confidence * 100)}% conf</span>
@@ -168,12 +168,12 @@ function QueueContent() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-canvas">
+      <div className="flex-1 overflow-y-auto">
         {selectedCase ? (
           <div className="p-8">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2 text-ink">{selectedCase.customerEmail}</h2>
-              <div className="flex gap-4 text-sm text-ink-subdued">
+              <h2 className="text-2xl font-semibold mb-2">{selectedCase.customerEmail}</h2>
+              <div className="flex gap-4 text-sm text-muted-foreground">
                 <span>Customer ID: {selectedCase.customerId}</span>
                 <span>Plan: {selectedCase.plan}</span>
                 <span>${selectedCase.mrr.toFixed(2)} MRR</span>
@@ -182,14 +182,14 @@ function QueueContent() {
             </div>
 
             <div className="mb-6">
-              <h3 className="font-semibold mb-2 text-ink">Classification</h3>
-              <div className="bg-surface p-4 rounded-3xl border border-line space-y-3">
+              <h3 className="font-semibold mb-2">Classification</h3>
+              <div className="bg-muted/50 p-4 rounded-md border border-border space-y-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-ink-subdued">Churn Reason</label>
+                  <label className="block text-sm font-medium mb-1 text-muted-foreground">Churn Reason</label>
                   <select
                     value={editedReason}
                     onChange={(e) => setEditedReason(e.target.value)}
-                    className="w-full border border-line rounded-3xl px-3 py-2 bg-panel text-ink focus:outline-none focus:border-status-green"
+                    className="w-full border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                   >
                     <option value="price">Price</option>
                     <option value="bug">Bug</option>
@@ -200,16 +200,16 @@ function QueueContent() {
                     <option value="other">Other</option>
                   </select>
                   {editedReason !== selectedCase.reason && (
-                    <p className="text-xs text-status-green mt-1">Reason override will be applied</p>
+                    <p className="text-xs text-green-600 mt-1">Reason override will be applied</p>
                   )}
                 </div>
-                <p className="text-ink-dim"><strong className="text-ink">Confidence:</strong> {Math.round(selectedCase.confidence * 100)}%</p>
-                <p className="text-ink-dim"><strong className="text-ink">Trigger:</strong> {selectedCase.triggerType}</p>
+                <p className="text-muted-foreground"><strong>Confidence:</strong> {Math.round(selectedCase.confidence * 100)}%</p>
+                <p className="text-muted-foreground"><strong>Trigger:</strong> {selectedCase.triggerType}</p>
                 <div className="mt-2">
-                  <strong className="text-ink">Evidence:</strong>
+                  <strong>Evidence:</strong>
                   <ul className="list-disc list-inside mt-1">
                     {selectedCase.evidence.map((e, i) => (
-                      <li key={i} className="text-sm text-ink-dim">{e}</li>
+                      <li key={i} className="text-sm text-muted-foreground">{e}</li>
                     ))}
                   </ul>
                 </div>
@@ -217,24 +217,24 @@ function QueueContent() {
             </div>
 
             <div className="mb-6">
-              <h3 className="font-semibold mb-2 text-ink">Email Draft</h3>
-              <div className="bg-surface p-4 rounded-3xl border border-line space-y-4">
+              <h3 className="font-semibold mb-2">Email Draft</h3>
+              <div className="bg-muted/50 p-4 rounded-md border border-border space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-ink-subdued">Subject</label>
+                  <label className="block text-sm font-medium mb-1 text-muted-foreground">Subject</label>
                   <input
                     type="text"
                     value={editedSubject}
                     onChange={(e) => setEditedSubject(e.target.value)}
-                    className="w-full border border-line rounded-3xl px-3 py-2 bg-panel text-ink focus:outline-none focus:border-status-green"
+                    className="w-full border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-ink-subdued">Body</label>
+                  <label className="block text-sm font-medium mb-1 text-muted-foreground">Body</label>
                   <textarea
                     value={editedBody}
                     onChange={(e) => setEditedBody(e.target.value)}
                     rows={10}
-                    className="w-full border border-line rounded-3xl px-3 py-2 bg-panel text-ink focus:outline-none focus:border-status-green"
+                    className="w-full border border-border rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
               </div>
@@ -243,38 +243,38 @@ function QueueContent() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleApprove}
-                className="px-6 py-2 bg-status-green text-black rounded-3xl hover:bg-status-green/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={editedReason === 'payment_failed' || editedReason === 'other'}
               >
-                Approve & Enroll in Resend
+                Approve & Send
               </button>
               <button
                 onClick={handleReject}
-                className="px-6 py-2 bg-status-red text-white rounded-3xl hover:bg-status-red/90 font-medium transition-colors"
+                className="px-6 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 font-medium transition-colors"
               >
                 Reject
               </button>
               <button
                 onClick={() => handleSnooze(4)}
-                className="px-6 py-2 bg-surface border border-line text-ink rounded-3xl hover:border-line-hover font-medium transition-colors"
+                className="px-6 py-2 bg-background border border-border rounded-md hover:bg-accent font-medium transition-colors"
               >
                 Snooze 4h
               </button>
               <button
                 onClick={() => handleSnooze(24)}
-                className="px-6 py-2 bg-surface border border-line text-ink rounded-3xl hover:border-line-hover font-medium transition-colors"
+                className="px-6 py-2 bg-background border border-border rounded-md hover:bg-accent font-medium transition-colors"
               >
                 Snooze 24h
               </button>
               {(editedReason === 'payment_failed' || editedReason === 'other') && (
-                <p className="text-sm text-status-green self-center">
-                  Cannot auto-enroll {editedReason} cases. Override reason or reject.
+                <p className="text-sm text-green-600 self-center">
+                  Cannot auto-send {editedReason} cases. Override reason or reject.
                 </p>
               )}
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-ink-dim">
+          <div className="flex items-center justify-center h-full text-muted-foreground">
             Select a case to review
           </div>
         )}
@@ -304,14 +304,14 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-6">
-      <Card className="p-8 max-w-md w-full bg-surface border-border-visible">
-        <h1 className="font-display text-display-md text-text-display mb-6 font-medium text-center">
+    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+      <Card className="p-8 max-w-md w-full">
+        <h1 className="font-display text-display-md mb-6 font-normal text-center">
           Queue Access
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="password" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+            <label htmlFor="password" className="block font-mono text-sm uppercase tracking-wider mb-2">
               Password
             </label>
             <Input
@@ -326,12 +326,12 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
               className="w-full"
             />
             {error && (
-              <p className="mt-2 font-mono text-caption text-error">
+              <p className="mt-2 text-sm text-destructive">
                 Invalid password
               </p>
             )}
           </div>
-          <Button type="submit" variant="primary" className="w-full">
+          <Button type="submit" variant="default" className="w-full">
             Access queue
           </Button>
         </form>
@@ -374,7 +374,7 @@ function QueuePageContent() {
   }, [searchParams]);
 
   if (requiresAuth === null) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-background" />;
   }
 
   if (requiresAuth && !isUnlocked) {
@@ -386,7 +386,7 @@ function QueuePageContent() {
 
 export default function QueuePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <QueuePageContent />
     </Suspense>
   );
