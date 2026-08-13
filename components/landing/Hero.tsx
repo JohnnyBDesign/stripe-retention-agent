@@ -10,18 +10,18 @@ export default function Hero() {
         <div className="max-w-3xl mx-auto text-center">
           {/* Chip */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-surface border border-line text-ink-dim text-xs font-medium mb-8">
-            For SaaS on Stripe Billing
+            For SaaS founders who bill on Stripe
           </div>
 
           {/* H1 - text only */}
           <h1 className="text-5xl md:text-hero-lg font-bold text-ink mb-6">
-            Retention agent for your Stripe subscribers
+            Know why they cancel — before they disappear.
           </h1>
 
-          {/* Subhead - clarify Signal is third-party */}
+          {/* Subhead - explicit independence from Stripe */}
           <p className="text-xl md:text-2xl text-ink-dim leading-relaxed mb-10 max-w-2xl mx-auto">
-            Signal classifies why customers cancel or downgrade, drafts retention emails, 
-            and waits for your approval before enrolling them in Resend playbooks.
+            Signal is built for SaaS founders who bill on Stripe. We read cancel and silent-churn signals, 
+            draft the save, and enroll a segment in your Resend after you approve. Independent product — not made by Stripe.
           </p>
 
           {/* CTAs */}
@@ -42,7 +42,7 @@ export default function Hero() {
 
           {/* Trust line */}
           <p className="text-sm text-ink-subdued">
-            Human-in-the-loop · Resend segments · No auto-sends
+            Human in the loop · Resend segments (ret_*) · No cancel-button widget · No email from our domain
           </p>
         </div>
       </div>
