@@ -1,4 +1,13 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 export default function Features() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+
   const features = [
     {
       icon: '🔍',
@@ -27,7 +36,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="relative py-32 px-6 md:px-8 bg-canvas" id="product">
+    <section className="relative py-32 px-6 md:px-8 bg-canvas" id="product" ref={ref}>
       <div className="mx-auto max-w-content">
         <div className="mb-16">
           <p className="font-nav text-[11px] uppercase tracking-[0.1em] text-muted-foreground mb-6">
@@ -40,18 +49,25 @@ export default function Features() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
               className={`${feature.color} rounded-sm p-8 text-canvas`}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: [0.33, 1, 0.68, 1]
+              }}
             >
-              <div className="text-[48px] mb-4">{feature.icon}</div>
+              <div className="text-[48px] mb-4 inline-block rotate-slow">{feature.icon}</div>
               <h3 className="font-body text-[20px] font-medium mb-3 tracking-tight">
                 {feature.title}
               </h3>
               <p className="font-body text-[14px] leading-relaxed text-canvas/70">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

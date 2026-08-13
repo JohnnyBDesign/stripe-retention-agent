@@ -1,4 +1,11 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+
 export default function CaseStudies() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const cases = [
     {
       title: 'Scan Report',
@@ -46,11 +53,22 @@ export default function CaseStudies() {
 
         <div className="space-y-6">
           {cases.map((item, index) => (
-            <div
+            <motion.div
               key={index}
-              className={`${item.color} rounded-sm overflow-hidden`}
+              className={`${item.color} rounded-sm overflow-hidden cursor-pointer relative`}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
             >
-              <div className="p-8 md:p-12">
+              <motion.div
+                className="absolute inset-0 bg-canvas/5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+                transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+              />
+              
+              <div className="p-8 md:p-12 relative z-10">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex-1">
                     <p className="font-nav text-[11px] uppercase tracking-[0.1em] text-canvas/60 mb-2">
@@ -77,8 +95,20 @@ export default function CaseStudies() {
                     </div>
                   ))}
                 </div>
+
+                <motion.div
+                  className="mt-8 font-nav text-[11px] uppercase tracking-[0.1em] text-canvas flex items-center gap-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: hoveredIndex === index ? 1 : 0, y: hoveredIndex === index ? 0 : 10 }}
+                  transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+                >
+                  LEARN MORE
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-canvas">
+                    <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

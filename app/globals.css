@@ -51,42 +51,92 @@
 }
 
 @layer utilities {
-  /* Floating bars animation */
-  @keyframes float-vertical {
-    0%, 100% {
-      transform: translateY(0px);
+  /* Nav link underline hover */
+  .nav-link {
+    position: relative;
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transition: width 0.3s ease-out;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  /* Floating bars animation - linear continuous loop */
+  @keyframes float-up-down {
+    0% {
+      transform: translateY(-100vh);
     }
-    50% {
-      transform: translateY(-20px);
+    100% {
+      transform: translateY(100vh);
     }
   }
   
-  @keyframes float-vertical-reverse {
-    0%, 100% {
-      transform: translateY(0px);
+  @keyframes float-down-up {
+    0% {
+      transform: translateY(100vh);
     }
-    50% {
-      transform: translateY(20px);
+    100% {
+      transform: translateY(-100vh);
     }
   }
 
-  .float-bar {
-    animation: float-vertical 8s ease-in-out infinite;
+  .float-bar-loop {
+    animation: float-up-down linear infinite;
   }
 
-  .float-bar-reverse {
-    animation: float-vertical-reverse 8s ease-in-out infinite;
+  .float-bar-loop-reverse {
+    animation: float-down-up linear infinite;
   }
 
-  .delay-1 {
-    animation-delay: 1s;
+  /* Logo marquee */
+  @keyframes marquee-rtl {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .marquee-rtl {
+    animation: marquee-rtl 30s linear infinite;
   }
 
-  .delay-2 {
-    animation-delay: 2s;
+  /* Footer wordmark marquee */
+  @keyframes marquee-slow {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  .marquee-slow {
+    animation: marquee-slow 60s linear infinite;
   }
 
-  .delay-3 {
-    animation-delay: 3s;
+  /* Feature icon rotation */
+  @keyframes rotate-slow {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .rotate-slow {
+    animation: rotate-slow 20s linear infinite;
   }
 }

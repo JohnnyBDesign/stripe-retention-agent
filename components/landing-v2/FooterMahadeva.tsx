@@ -96,11 +96,16 @@ export default function FooterMahadeva() {
             </div>
           </div>
 
-          {/* Giant ghosted SIGNAL wordmark */}
+          {/* Giant ghosted SIGNAL wordmark with marquee */}
           <div className="relative overflow-hidden py-12">
-            <p className="font-body text-[120px] md:text-[180px] lg:text-[240px] font-bold leading-none text-white/5 text-center select-none">
-              SIGNAL
-            </p>
+            <div className="flex whitespace-nowrap">
+              <p className="font-body text-[120px] md:text-[180px] lg:text-[240px] font-bold leading-none text-white/5 select-none marquee-slow inline-block pr-24">
+                SIGNAL SIGNAL SIGNAL SIGNAL
+              </p>
+              <p className="font-body text-[120px] md:text-[180px] lg:text-[240px] font-bold leading-none text-white/5 select-none marquee-slow inline-block pr-24">
+                SIGNAL SIGNAL SIGNAL SIGNAL
+              </p>
+            </div>
           </div>
 
           {/* Copyright */}

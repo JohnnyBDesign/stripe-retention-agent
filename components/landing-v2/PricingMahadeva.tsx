@@ -1,7 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 
 export default function PricingMahadeva() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
   const plans = [
     {
       name: 'Starter',
@@ -49,7 +55,8 @@ export default function PricingMahadeva() {
   ];
 
   return (
-    <section className="relative py-32 px-6 md:px-8 bg-canvas" id="pricing">
+    <section className="relative py-32 px-6 md:px-8 bg-canvas" id="pricing" ref={ref}>
+      <div id="founding" className="absolute -top-20" />
       <div className="mx-auto max-w-content">
         <div className="mb-16 text-center">
           <p className="font-nav text-[11px] uppercase tracking-[0.1em] text-muted-foreground mb-6">
@@ -67,12 +74,19 @@ export default function PricingMahadeva() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <div
+          {plans.map((plan, index) => (
+            <motion.div
               key={plan.name}
               className={`${plan.highlighted ? plan.color : plan.color} rounded-sm p-8 ${
                 plan.highlighted ? 'ring-2 ring-mint' : 'border border-border/50'
               }`}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: [0.33, 1, 0.68, 1]
+              }}
             >
               <p className="font-nav text-[11px] uppercase tracking-[0.1em] mb-2 ${plan.highlighted ? 'text-canvas/60' : 'text-muted-foreground'}">
                 {plan.name}
@@ -114,7 +128,7 @@ export default function PricingMahadeva() {
                   {plan.cta}
                 </Button>
               </Link>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
