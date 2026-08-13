@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { CaseState } from '@/lib/types';
+import { verifyQueueAuth, unauthorizedResponse } from '@/lib/queue-auth';
 
 export async function GET(req: NextRequest) {
+  // Protect queue data - must be authenticated
+  if (!verifyQueueAuth(req)) {
+    return unauthorizedResponse();
+  }
+
   const { searchParams } = new URL(req.url);
   const state = searchParams.get('state') || 'pending';
   const limit = parseInt(searchParams.get('limit') || '50');
