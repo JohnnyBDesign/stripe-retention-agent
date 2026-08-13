@@ -42,7 +42,7 @@ export default function Testimonials() {
               className="bg-panel rounded-sm p-8 border border-border/50"
             >
               <p className="font-body text-[16px] leading-relaxed text-white mb-8">
-                "{testimonial.quote}"
+                &quot;{testimonial.quote}&quot;
               </p>
               <div>
                 <p className="font-body text-[16px] font-medium text-white mb-1">

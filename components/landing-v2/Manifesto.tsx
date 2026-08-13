@@ -13,7 +13,7 @@ export default function Manifesto() {
           </div>
           <div className="space-y-6">
             <p className="font-body text-[16px] leading-relaxed text-canvas/80">
-              Built for modern SaaS teams billing on Stripe. Signal watches your subscriptions, classifies why they're canceling, drafts the right save email, and waits for your approval.
+              Built for modern SaaS teams billing on Stripe. Signal watches your subscriptions, classifies why they&apos;re canceling, drafts the right save email, and waits for your approval.
             </p>
             <p className="font-body text-[16px] leading-relaxed text-canvas/80">
               Sending included. No ESP integration. Replies go straight to you. You stay in control of every message.
