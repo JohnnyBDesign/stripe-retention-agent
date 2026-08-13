@@ -108,25 +108,27 @@ export async function POST(request: NextRequest) {
     // Calculate 90 days ago
     const ninetyDaysAgo = Math.floor(Date.now() / 1000) - (90 * 24 * 60 * 60);
 
-    // Track revenue leakage by category
-    // Note: silent/never_activated require activity data, not available in 60s scan
+    // Track revenue leakage by category (scan buckets)
+    // Hero $ = involuntary + voluntary + downgrade + leaving-soon
     const leakage = {
-      failedPayments: 0,
-      cancellations: 0,
-      downgrades: 0,
+      involuntary: 0,        // Failed/uncollectible invoices (display only)
+      voluntary: 0,          // Already canceled subscriptions
+      downgrades: 0,         // Subscription tier reductions
+      leavingSoon: 0,        // cancel_at_period_end (scheduled)
     };
 
-    // Track reasons with dollar amounts (omit silent_rescue, never_activated - need activity data)
+    // Track voluntary cancel reasons with dollar amounts (for why-pie)
+    // Why-pie $ ≤ voluntary classified $
     const reasonBreakdown: Record<string, number> = {
       price: 0,
       bug: 0,
       competitor: 0,
       missing_feature: 0,
-      payment_failed: 0,
+      never_activated: 0,
       other: 0,
     };
 
-    // 1. Scan failed/uncollectible/past_due invoices
+    // 1. Scan failed/uncollectible/past_due invoices (involuntary - display only)
     const failedInvoices = await stripe.invoices.list({
       created: { gte: ninetyDaysAgo },
       status: 'open',
@@ -137,8 +139,7 @@ export async function POST(request: NextRequest) {
       // Check if invoice is past due or uncollectible
       if (invoice.status === 'open' && invoice.due_date && invoice.due_date < Date.now() / 1000) {
         const amount = (invoice.amount_due || 0) / 100;
-        leakage.failedPayments += amount;
-        reasonBreakdown.payment_failed += amount;
+        leakage.involuntary += amount;
       }
     }
 
@@ -151,11 +152,10 @@ export async function POST(request: NextRequest) {
 
     for (const invoice of uncollectibleInvoices.data) {
       const amount = (invoice.amount_due || 0) / 100;
-      leakage.failedPayments += amount;
-      reasonBreakdown.payment_failed += amount;
+      leakage.involuntary += amount;
     }
 
-    // 2. Scan canceled subscriptions
+    // 2. Scan canceled subscriptions (voluntary cancel)
     const canceledSubs = await stripe.subscriptions.list({
       status: 'canceled',
       created: { gte: ninetyDaysAgo },
@@ -170,9 +170,9 @@ export async function POST(request: NextRequest) {
         subMRR += calculateMRR(item.price);
       }
 
-      leakage.cancellations += subMRR;
+      leakage.voluntary += subMRR;
 
-      // Classify the cancellation reason
+      // Classify the cancellation reason (for why-pie)
       const comment = sub.cancellation_details?.comment;
       const reason = classifyCancelReason(sub.cancellation_details, comment);
       
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
       reasonBreakdown[reason] += subMRR;
     }
 
-    // 3. Scan active subscriptions with cancel_at_period_end
+    // 3. Scan active subscriptions with cancel_at_period_end (leaving-soon)
     const scheduledCancelSubs = await stripe.subscriptions.list({
       status: 'active',
       limit: 100,
@@ -197,9 +197,9 @@ export async function POST(request: NextRequest) {
           subMRR += calculateMRR(item.price);
         }
 
-        leakage.cancellations += subMRR;
+        leakage.leavingSoon += subMRR;
 
-        // Classify the cancellation reason
+        // Classify the cancellation reason (for why-pie)
         const comment = sub.cancellation_details?.comment;
         const reason = classifyCancelReason(sub.cancellation_details, comment);
         
@@ -247,16 +247,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate total leakage (hero = cancellations + downgrades; failed payments display only)
-    const totalLeakage = leakage.cancellations + leakage.downgrades;
+    // Calculate hero total (sum of all four buckets)
+    const heroTotal = leakage.involuntary + leakage.voluntary + leakage.downgrades + leakage.leavingSoon;
 
     // Return scan results
     return NextResponse.json({
-      totalLeakage: Math.round(totalLeakage * 100) / 100,
+      totalLeakage: Math.round(heroTotal * 100) / 100,
       breakdown: {
-        failedPayments: Math.round(leakage.failedPayments * 100) / 100,
-        cancellations: Math.round(leakage.cancellations * 100) / 100,
+        involuntary: Math.round(leakage.involuntary * 100) / 100,
+        voluntary: Math.round(leakage.voluntary * 100) / 100,
         downgrades: Math.round(leakage.downgrades * 100) / 100,
+        leavingSoon: Math.round(leakage.leavingSoon * 100) / 100,
       },
       reasonBreakdown: Object.fromEntries(
         Object.entries(reasonBreakdown)

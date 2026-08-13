@@ -6,9 +6,10 @@ import Link from 'next/link';
 type ScanResult = {
   totalLeakage: number;
   breakdown: {
-    failedPayments: number;
-    cancellations: number;
+    involuntary: number;
+    voluntary: number;
     downgrades: number;
+    leavingSoon: number;
   };
   reasonBreakdown: Record<string, number>;
   scannedAt: string;
@@ -19,8 +20,8 @@ const REASON_LABELS: Record<string, string> = {
   bug: 'Bugs / Technical Issues',
   competitor: 'Switched to Competitor',
   missing_feature: 'Missing Features',
-  payment_failed: 'Failed Payments',
-  other: 'Other / Unknown',
+  never_activated: 'Never Activated',
+  other: 'Other / No Reason on File',
 };
 
 export default function ScanPage() {
@@ -173,7 +174,7 @@ export default function ScanPage() {
             </>
           ) : (
             <>
-              {/* Results Header - Hero = Cancellations + Why They Left */}
+              {/* Results Header - Hero $ = Sum of All Four Buckets */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-surface border border-line text-ink-dim text-xs font-medium mb-6">
                   Scanned {new Date(result.scannedAt).toLocaleDateString()}
@@ -187,33 +188,45 @@ export default function ScanPage() {
                 </p>
               </div>
 
-              {/* Two Primary Tiles - Cancellations and Downgrades (Hero) */}
-              <div className="grid grid-cols-2 gap-4 mb-12">
-                <div className="bg-surface border border-line rounded-2xl p-6 text-center">
-                  <div className="text-3xl font-bold text-ink mb-2">
-                    ${result.breakdown.cancellations.toLocaleString()}
+              {/* Four Scan Buckets */}
+              <div className="grid grid-cols-2 gap-3 mb-12">
+                <div className="bg-surface border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink mb-1">
+                    ${result.breakdown.voluntary.toLocaleString()}
                   </div>
-                  <div className="text-sm text-ink-dim">Cancellations</div>
+                  <div className="text-xs text-ink-dim">Voluntary</div>
                 </div>
-                <div className="bg-surface border border-line rounded-2xl p-6 text-center">
-                  <div className="text-3xl font-bold text-ink mb-2">
+                <div className="bg-surface border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink mb-1">
+                    ${result.breakdown.leavingSoon.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-ink-dim">Leaving Soon</div>
+                </div>
+                <div className="bg-surface border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink mb-1">
                     ${result.breakdown.downgrades.toLocaleString()}
                   </div>
-                  <div className="text-sm text-ink-dim">Downgrades</div>
+                  <div className="text-xs text-ink-dim">Downgrade</div>
+                </div>
+                <div className="bg-panel border border-line rounded-2xl p-5">
+                  <div className="text-2xl font-bold text-ink-subdued mb-1">
+                    ${result.breakdown.involuntary.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-ink-subdued">Involuntary</div>
                 </div>
               </div>
 
-              {/* Why They Left - The Differentiator */}
+              {/* Why-Pie: Why They Left (Voluntary Classified $ Only) */}
               <div className="bg-surface border border-line rounded-3xl p-8 mb-8">
                 <h2 className="text-xl font-semibold text-ink mb-6">Why they left</h2>
                 
                 {Object.entries(result.reasonBreakdown).length > 0 ? (
                   <div className="space-y-3">
                     {Object.entries(result.reasonBreakdown)
-                      .filter(([reason]) => reason !== 'payment_failed')
                       .sort(([, a], [, b]) => b - a)
                       .map(([reason, amount]) => {
-                        const percentage = (amount / result.totalLeakage) * 100;
+                        const voluntaryTotal = result.breakdown.voluntary + result.breakdown.leavingSoon;
+                        const percentage = voluntaryTotal > 0 ? (amount / voluntaryTotal) * 100 : 0;
                         return (
                           <div key={reason} className="space-y-1.5">
                             <div className="flex items-center justify-between text-sm">
@@ -239,22 +252,22 @@ export default function ScanPage() {
                 {/* Activity signal note */}
                 <div className="mt-6 pt-6 border-t border-line">
                   <p className="text-xs text-ink-subdued">
-                    Activity signals (silent, never activated) unlock after connecting Signal to your account.
+                    Silent renewers need a usage signal — connect activity after you start.
                   </p>
                 </div>
               </div>
 
-              {/* Failed Payments - Display Only (Not Hero) */}
-              {result.breakdown.failedPayments > 0 && (
+              {/* Involuntary Note - Display Only */}
+              {result.breakdown.involuntary > 0 && (
                 <div className="bg-panel border border-line rounded-2xl p-5 mb-8">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-ink-dim">Failed payments (display only)</span>
-                    <span className="text-lg font-semibold text-ink">
-                      ${result.breakdown.failedPayments.toLocaleString()}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-ink-subdued">Failed payments</span>
+                    <span className="text-lg font-semibold text-ink-subdued">
+                      ${result.breakdown.involuntary.toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-xs text-ink-subdued mt-2">
-                    Dunning requires write access and is handled separately.
+                  <p className="text-xs text-ink-subdued">
+                    Failed payments — Stripe retries; not Signal v0.
                   </p>
                 </div>
               )}
