@@ -1,42 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { ChurnReason } from '@/lib/types';
+import { classifyCancelReason } from '@/lib/classifier';
 
-// Helper to classify cancellation reason from Stripe's cancellation_details
-// Note: silent_rescue and never_activated require activity data and cannot be
-// detected from Stripe-only data. They're omitted from 60-second scan.
-function classifyCancelReason(
-  cancelDetails: Stripe.Subscription.CancellationDetails | null | undefined,
-  comment: string | null | undefined
-): ChurnReason {
-  // If there's a comment, try to classify it first
-  if (comment) {
-    const lowerComment = comment.toLowerCase();
-    if (lowerComment.includes('price') || lowerComment.includes('expensive') || lowerComment.includes('cost')) {
-      return 'price';
-    }
-    if (lowerComment.includes('bug') || lowerComment.includes('issue') || lowerComment.includes('problem') || lowerComment.includes('error')) {
-      return 'bug';
-    }
-    if (lowerComment.includes('competitor') || lowerComment.includes('alternative') || lowerComment.includes('switched')) {
-      return 'competitor';
-    }
-    if (lowerComment.includes('feature') || lowerComment.includes('functionality') || lowerComment.includes('missing')) {
-      return 'missing_feature';
+// Simple in-memory rate limiter for scan endpoint
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const RATE_LIMIT_MAX_REQUESTS = 5; // 5 scans per hour per IP
+
+function checkRateLimit(ip: string): { allowed: boolean; resetAt?: number } {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  // Clean up old entries periodically
+  if (Math.random() < 0.01) {
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (value.resetAt < now) {
+        rateLimitMap.delete(key);
+      }
     }
   }
 
-  // Fall back to Stripe's reason
-  const feedback = cancelDetails?.feedback;
-  if (feedback === 'too_expensive') return 'price';
-  if (feedback === 'missing_features') return 'missing_feature';
-  if (feedback === 'switched_service') return 'competitor';
-  if (feedback === 'customer_service') return 'bug';
-  if (feedback === 'low_quality') return 'bug';
-  // Note: 'unused' requires activity tracking, not available in scan
-  // if (feedback === 'unused') return 'never_activated';
+  if (!record || record.resetAt < now) {
+    // New window
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true };
+  }
 
-  return 'other';
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return { allowed: false, resetAt: record.resetAt };
+  }
+
+  // Increment count
+  record.count += 1;
+  return { allowed: true };
 }
 
 // Calculate MRR from a price object
@@ -69,6 +65,24 @@ function calculateMRR(price: Stripe.Price | null | undefined): number {
 // Main scan handler
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimitCheck = checkRateLimit(ip);
+    
+    if (!rateLimitCheck.allowed) {
+      const resetAt = rateLimitCheck.resetAt || Date.now();
+      const resetInMinutes = Math.ceil((resetAt - Date.now()) / (60 * 1000));
+      return NextResponse.json(
+        { error: `Rate limit exceeded. Please try again in ${resetInMinutes} minutes.` },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((resetAt - Date.now()) / 1000)),
+          }
+        }
+      );
+    }
+
     const body = await request.json();
     const { stripeKey } = body;
 
@@ -118,13 +132,13 @@ export async function POST(request: NextRequest) {
     };
 
     // Track voluntary cancel reasons with dollar amounts (for why-pie)
-    // Why-pie $ ≤ voluntary classified $
+    // Why-pie = classified voluntary cancels ONLY (canceled + leaving-soon with cancellation_details)
+    // Downgrades stay in split tile only, NOT in why-pie
     const reasonBreakdown: Record<string, number> = {
       price: 0,
       bug: 0,
       competitor: 0,
       missing_feature: 0,
-      never_activated: 0,
       other: 0,
     };
 
@@ -156,14 +170,19 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Scan canceled subscriptions (voluntary cancel)
+    // Filter by canceled in the last 90 days (canceled_at), not created
     const canceledSubs = await stripe.subscriptions.list({
       status: 'canceled',
-      created: { gte: ninetyDaysAgo },
       limit: 100,
       expand: ['data.items.data.price'],
     });
 
     for (const sub of canceledSubs.data) {
+      // Skip if not canceled in the last 90 days
+      if (!sub.canceled_at || sub.canceled_at < ninetyDaysAgo) {
+        continue;
+      }
+
       // Calculate MRR from the subscription items
       let subMRR = 0;
       for (const item of sub.items.data) {
@@ -199,19 +218,22 @@ export async function POST(request: NextRequest) {
 
         leakage.leavingSoon += subMRR;
 
-        // Classify the cancellation reason (for why-pie)
-        const comment = sub.cancellation_details?.comment;
-        const reason = classifyCancelReason(sub.cancellation_details, comment);
-        
-        if (!reasonBreakdown[reason]) {
-          reasonBreakdown[reason] = 0;
+        // Classify the cancellation reason (for why-pie) - only if cancellation_details present
+        if (sub.cancellation_details) {
+          const comment = sub.cancellation_details?.comment;
+          const reason = classifyCancelReason(sub.cancellation_details, comment);
+          
+          if (!reasonBreakdown[reason]) {
+            reasonBreakdown[reason] = 0;
+          }
+          reasonBreakdown[reason] += subMRR;
         }
-        reasonBreakdown[reason] += subMRR;
       }
     }
 
     // 4. Scan for downgrades by checking subscription.updated events
     // Look for events where a subscription item's price decreased
+    // Downgrades do NOT go into why-pie (reasonBreakdown) - they stay in split tile only
     const subUpdatedEvents = await stripe.events.list({
       type: 'customer.subscription.updated',
       created: { gte: ninetyDaysAgo },
@@ -237,12 +259,10 @@ export async function POST(request: NextRequest) {
           newMRR += calculateMRR(item.price as Stripe.Price);
         }
 
-        // If MRR decreased, it's a downgrade
+        // If MRR decreased, it's a downgrade - add to split tile, NOT to why-pie
         if (newMRR < oldMRR) {
           const downgradeAmount = oldMRR - newMRR;
           leakage.downgrades += downgradeAmount;
-          // Classify downgrades as price-related
-          reasonBreakdown.price += downgradeAmount;
         }
       }
     }

@@ -7,6 +7,44 @@ export interface ClassifierContext {
   activationAt: Date | null;
 }
 
+/**
+ * Classify cancellation reason from Stripe's cancellation_details
+ * Used by both queue (full context) and scan (Stripe-only)
+ * Note: silent_rescue and never_activated require activity data
+ */
+export function classifyCancelReason(
+  cancelDetails: any | null | undefined,
+  comment: string | null | undefined
+): ChurnReason {
+  // If there's a comment, try to classify it first
+  if (comment) {
+    const lowerComment = comment.toLowerCase();
+    if (lowerComment.includes('price') || lowerComment.includes('expensive') || lowerComment.includes('cost')) {
+      return 'price';
+    }
+    if (lowerComment.includes('bug') || lowerComment.includes('issue') || lowerComment.includes('problem') || lowerComment.includes('error')) {
+      return 'bug';
+    }
+    if (lowerComment.includes('competitor') || lowerComment.includes('alternative') || lowerComment.includes('switched')) {
+      return 'competitor';
+    }
+    if (lowerComment.includes('feature') || lowerComment.includes('functionality') || lowerComment.includes('missing')) {
+      return 'missing_feature';
+    }
+  }
+
+  // Fall back to Stripe's reason
+  const feedback = cancelDetails?.feedback;
+  if (feedback === 'too_expensive') return 'price';
+  if (feedback === 'missing_features') return 'missing_feature';
+  if (feedback === 'switched_service') return 'competitor';
+  if (feedback === 'customer_service') return 'bug';
+  if (feedback === 'low_quality') return 'bug';
+  // Note: 'unused' requires activity tracking, not available in scan-only mode
+
+  return 'other';
+}
+
 export async function classifyChurn(context: ClassifierContext): Promise<ClassificationResult> {
   const { subscription, tenureDays, lastActiveAt, activationAt } = context;
   const evidence: string[] = [];
@@ -64,7 +102,10 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
     const feedback = subscription.cancelDetails.feedback;
     const comment = subscription.cancelDetails.comment || '';
     
-    if (feedback === 'too_expensive' || comment.toLowerCase().includes('price') || comment.toLowerCase().includes('expensive')) {
+    // Use shared classifier
+    const reason = classifyCancelReason(subscription.cancelDetails, comment);
+    
+    if (reason === 'price') {
       evidence.push('Price-related cancellation feedback');
       return {
         reason: 'price',
@@ -76,7 +117,7 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
       };
     }
     
-    if (feedback === 'missing_features' || comment.toLowerCase().includes('feature')) {
+    if (reason === 'missing_feature') {
       evidence.push('Missing features mentioned');
       return {
         reason: 'missing_feature',
@@ -88,7 +129,7 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
       };
     }
     
-    if (feedback === 'switched_service' || comment.toLowerCase().includes('competitor')) {
+    if (reason === 'competitor') {
       evidence.push('Switched to competitor');
       return {
         reason: 'competitor',
@@ -100,7 +141,7 @@ export async function classifyChurn(context: ClassifierContext): Promise<Classif
       };
     }
     
-    if (comment.toLowerCase().includes('bug') || comment.toLowerCase().includes('issue') || comment.toLowerCase().includes('problem')) {
+    if (reason === 'bug') {
       evidence.push('Technical issues mentioned');
       return {
         reason: 'bug',

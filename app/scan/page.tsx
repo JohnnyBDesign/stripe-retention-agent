@@ -23,7 +23,6 @@ const REASON_LABELS: Record<string, string> = {
   bug: 'Bugs / Technical Issues',
   competitor: 'Switched to Competitor',
   missing_feature: 'Missing Features',
-  never_activated: 'Never Activated',
   other: 'Other / No Reason on File',
 };
 
@@ -277,7 +276,7 @@ export default function ScanPage() {
                   Get these in a queue you approve
                 </h3>
                 <p className="font-body text-body text-text-secondary mb-6 max-w-lg mx-auto">
-                  Signal classifies every cancel, drafts the save, and sends through your Resend — after you approve. No auto-sends.
+                  Signal classifies every cancel, drafts the save. Signal sends after you approve; replies to you. No auto-sends.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link href="/#pricing">
