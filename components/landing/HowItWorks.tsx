@@ -3,7 +3,7 @@ export default function HowItWorks() {
     {
       number: '1',
       title: 'Stripe webhook fires',
-      description: 'customer.subscription.updated or customer.subscription.deleted hits Signal's endpoint',
+      description: 'customer.subscription.updated or customer.subscription.deleted hits Signal\'s endpoint',
     },
     {
       number: '2',
