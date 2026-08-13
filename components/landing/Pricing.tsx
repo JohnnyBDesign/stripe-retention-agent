@@ -8,6 +8,7 @@ export default function Pricing() {
         '≤100 approved enrolls/mo',
         '1 HITL seat',
         'Resend segments',
+        'Email support',
       ],
     },
     {
@@ -18,6 +19,7 @@ export default function Pricing() {
         '≤500 approved enrolls/mo',
         '3 HITL seats',
         'Priority support',
+        'Resend segments',
       ],
       highlighted: true,
     },
