@@ -1,5 +1,6 @@
 import { Stripe } from 'stripe';
 import { prisma } from '@/lib/db';
+import { decryptStripeKey } from '@/lib/crypto';
 
 let stripeClient: Stripe | null = null;
 
@@ -25,9 +26,60 @@ export const stripe = new Proxy({} as Stripe, {
   },
 });
 
-async function resolveCustomerEmail(customer: string | Stripe.Customer | Stripe.DeletedCustomer): Promise<string> {
+/**
+ * Gets a user-specific Stripe client by userId.
+ * Returns null if no active connection found.
+ */
+export async function getUserStripeClient(userId: string): Promise<Stripe | null> {
+  const connection = await prisma.stripeConnection.findFirst({
+    where: {
+      userId,
+      isActive: true,
+    },
+  });
+
+  if (!connection) {
+    return null;
+  }
+
+  const decryptedKey = decryptStripeKey(connection.encryptedKey);
+
+  return new Stripe(decryptedKey, {
+    apiVersion: '2024-06-20',
+    typescript: true,
+  });
+}
+
+/**
+ * Gets a Stripe client by Stripe account ID.
+ * Returns the user-specific client and userId if found, otherwise returns the global client.
+ */
+export async function getStripeClientByAccount(stripeAccountId: string): Promise<{ client: Stripe; userId: string | null }> {
+  const connection = await prisma.stripeConnection.findFirst({
+    where: {
+      stripeAccountId,
+      isActive: true,
+    },
+  });
+
+  if (connection) {
+    const decryptedKey = decryptStripeKey(connection.encryptedKey);
+    const client = new Stripe(decryptedKey, {
+      apiVersion: '2024-06-20',
+      typescript: true,
+    });
+    return { client, userId: connection.userId };
+  }
+
+  // Fallback to global client for backward compatibility
+  return { client: stripe, userId: null };
+}
+
+async function resolveCustomerEmail(customer: string | Stripe.Customer | Stripe.DeletedCustomer, stripeClient?: Stripe): Promise<string> {
+  const client = stripeClient || getStripeClient();
+  
   if (typeof customer === 'string') {
-    const retrieved = await getStripeClient().customers.retrieve(customer);
+    const retrieved = await client.customers.retrieve(customer);
     if (!retrieved.deleted && retrieved.email) {
       return retrieved.email;
     }
@@ -39,15 +91,15 @@ async function resolveCustomerEmail(customer: string | Stripe.Customer | Stripe.
   return (customer as Stripe.Customer).email || '';
 }
 
-export async function getSubscriptionInfo(subscriptionId: string) {
-  const client = getStripeClient();
+export async function getSubscriptionInfo(subscriptionId: string, stripeClient?: Stripe) {
+  const client = stripeClient || getStripeClient();
   const subscription = await client.subscriptions.retrieve(subscriptionId, {
     expand: ['customer', 'default_payment_method'],
   });
 
   const customer = subscription.customer;
   const customerId = typeof customer === 'string' ? customer : customer.id;
-  const customerEmail = await resolveCustomerEmail(customer);
+  const customerEmail = await resolveCustomerEmail(customer, client);
   const plan = subscription.items.data[0]?.price;
 
   return {
@@ -68,12 +120,17 @@ export async function getSubscriptionInfo(subscriptionId: string) {
   };
 }
 
-export async function getCustomerActivity(customerId: string): Promise<{
+export async function getCustomerActivity(customerId: string, userId?: string | null): Promise<{
   lastActiveAt: Date | null;
   activationAt: Date | null;
 }> {
-  const activity = await prisma.customerActivity.findUnique({
-    where: { customerId },
+  const whereClause: any = { customerId };
+  if (userId !== undefined) {
+    whereClause.userId = userId;
+  }
+  
+  const activity = await prisma.customerActivity.findFirst({
+    where: whereClause,
   });
 
   if (activity) {

@@ -7,17 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  passwordHash      String?
+  name              String?
+  company           String?
+  replyToEmail      String?
+  emailVerified     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  stripeConnections StripeConnection[]
+  retentionCases    RetentionCase[]
+  
+  @@index([email])
+}
+
+model StripeConnection {
+  id                   String   @id @default(cuid())
+  userId               String
+  encryptedKey         String
+  keyLast4             String
+  webhookEndpointId    String?
+  webhookSecret        String?
+  stripeAccountId      String?
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([stripeAccountId])
+}
+
 model StripeEvent {
   id             String   @id @default(cuid())
   stripeEventId  String   @unique
   type           String
   payload        Json
   processed      Boolean  @default(false)
+  userId         String?
   createdAt      DateTime @default(now())
   
   @@index([stripeEventId])
   @@index([type])
   @@index([processed])
+  @@index([userId])
 }
 
 model CustomerActivity {
@@ -27,16 +64,19 @@ model CustomerActivity {
   lastActiveAt      DateTime?
   activationCompletedAt DateTime?
   events            Json?
+  userId            String?
   updatedAt         DateTime @updatedAt
   createdAt         DateTime @default(now())
   
   @@unique([customerId])
   @@index([customerId])
   @@index([stripeCustomerId])
+  @@index([userId])
 }
 
 model RetentionCase {
   id                  String   @id @default(cuid())
+  userId              String?
   customerId          String
   customerEmail       String
   subscriptionId      String?
@@ -60,8 +100,10 @@ model RetentionCase {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   
+  user                User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
   resendEnrollment    ResendEnrollment?
   
+  @@index([userId])
   @@index([customerId])
   @@index([state])
   @@index([reason])

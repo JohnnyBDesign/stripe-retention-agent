@@ -277,17 +277,17 @@ export default function ScanPage() {
                   Get these in a queue you approve
                 </h3>
                 <p className="font-body text-body text-muted-foreground mb-6 max-w-lg mx-auto">
-                  You approve. Signal sends. Replies go to you.
+                  Sign up to connect your Stripe and start approving retention cases. You approve. Signal sends. Replies go to you.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link href="/#pricing">
+                  <Link href="/login">
                     <Button variant="default" size="lg">
-                      See pricing
+                      Sign up / Login
                     </Button>
                   </Link>
-                  <Link href="/queue">
+                  <Link href="/#pricing">
                     <Button variant="outline" size="lg">
-                      View demo queue
+                      See pricing
                     </Button>
                   </Link>
                 </div>
