@@ -32,11 +32,11 @@ export default function Hero() {
                 See who&apos;s leaving — and why
               </Button>
             </Link>
-            <Link href="#founding">
+            <a href="#founding">
               <Button variant="secondary" size="lg">
                 Apply for founding — keep 50% off for 90 days after your first save
               </Button>
-            </Link>
+            </a>
           </div>
 
           {/* Trust line */}

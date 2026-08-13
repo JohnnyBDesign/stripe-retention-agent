@@ -1,7 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
 interface RetentionCase {
   id: string;
@@ -22,7 +26,7 @@ interface RetentionCase {
   createdAt: string;
 }
 
-export default function QueuePage() {
+function QueueContent() {
   const [cases, setCases] = useState<RetentionCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCase, setSelectedCase] = useState<RetentionCase | null>(null);
@@ -276,5 +280,114 @@ export default function QueuePage() {
         )}
       </div>
     </div>
+  );
+}
+
+function PasswordGate({ onUnlock }: { onUnlock: () => void }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const response = await fetch('/api/queue/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+
+    if (response.ok) {
+      onUnlock();
+    } else {
+      setError(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center px-6">
+      <Card className="p-8 max-w-md w-full bg-surface border-border-visible">
+        <h1 className="font-display text-display-md text-text-display mb-6 font-medium text-center">
+          Queue Access
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="password" className="block font-mono text-caption uppercase tracking-[0.06em] text-text-primary mb-2">
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(false);
+              }}
+              className="w-full"
+            />
+            {error && (
+              <p className="mt-2 font-mono text-caption text-error">
+                Invalid password
+              </p>
+            )}
+          </div>
+          <Button type="submit" variant="primary" className="w-full">
+            Access queue
+          </Button>
+        </form>
+      </Card>
+    </div>
+  );
+}
+
+function QueuePageContent() {
+  const searchParams = useSearchParams();
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [requiresAuth, setRequiresAuth] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const keyParam = searchParams.get('key');
+      
+      const response = await fetch('/api/queue/auth', {
+        method: 'GET',
+        headers: keyParam ? { 'x-queue-key': keyParam } : {},
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.requiresAuth) {
+          setRequiresAuth(true);
+          if (data.authenticated) {
+            setIsUnlocked(true);
+          }
+        } else {
+          setRequiresAuth(false);
+          setIsUnlocked(true);
+        }
+      } else {
+        setRequiresAuth(true);
+      }
+    };
+
+    checkAuth();
+  }, [searchParams]);
+
+  if (requiresAuth === null) {
+    return <div className="min-h-screen bg-black" />;
+  }
+
+  if (requiresAuth && !isUnlocked) {
+    return <PasswordGate onUnlock={() => setIsUnlocked(true)} />;
+  }
+
+  return <QueueContent />;
+}
+
+export default function QueuePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <QueuePageContent />
+    </Suspense>
   );
 }
