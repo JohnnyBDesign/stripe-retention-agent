@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -57,17 +58,31 @@ export default function FAQ() {
                 <span className="font-body text-[18px] text-white pr-8">
                   {faq.question}
                 </span>
-                <span className="text-white text-[24px] flex-shrink-0">
+                <motion.span
+                  className="text-white text-[24px] flex-shrink-0"
+                  animate={{ rotate: openIndex === index ? 180 : 0 }}
+                  transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+                >
                   {openIndex === index ? '−' : '+'}
-                </span>
+                </motion.span>
               </button>
-              {openIndex === index && (
-                <div className="px-6 pb-6">
-                  <p className="font-body text-[16px] leading-relaxed text-muted-foreground">
-                    {faq.answer}
-                  </p>
-                </div>
-              )}
+              <AnimatePresence initial={false}>
+                {openIndex === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-6">
+                      <p className="font-body text-[16px] leading-relaxed text-muted-foreground">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
         </div>

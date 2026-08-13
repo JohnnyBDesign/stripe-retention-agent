@@ -16,8 +16,14 @@ export default function Home() {
     <>
       <Nav />
       <main>
-        <HeroMahadeva />
-        <Manifesto />
+        <div className="relative">
+          <div className="sticky top-0 h-screen">
+            <HeroMahadeva />
+          </div>
+          <div className="relative z-20 bg-mint-light">
+            <Manifesto />
+          </div>
+        </div>
         <Features />
         <CaseStudies />
         <Stats />

@@ -10,17 +10,22 @@ export default function Marquee() {
     'Churn Analytics',
   ];
 
+  const duplicatedTools = [...tools, ...tools];
+
   return (
-    <section className="relative py-16 px-6 md:px-8 bg-panel border-y border-border/50">
-      <div className="mx-auto max-w-content">
+    <section className="relative py-16 bg-panel border-y border-border/50 overflow-hidden">
+      <div className="mx-auto max-w-content px-6 md:px-8">
         <p className="font-nav text-[11px] uppercase tracking-[0.1em] text-muted-foreground text-center mb-8">
           {'{BUILT FOR}'}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          {tools.map((tool, index) => (
+      </div>
+      
+      <div className="relative overflow-hidden">
+        <div className="flex marquee-rtl">
+          {duplicatedTools.map((tool, index) => (
             <div
               key={index}
-              className="font-body text-[16px] text-white/40 tracking-tight"
+              className="font-body text-[16px] text-white/40 tracking-tight whitespace-nowrap px-8 flex-shrink-0"
             >
               {tool}
             </div>
