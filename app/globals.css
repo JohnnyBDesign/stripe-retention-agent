@@ -4,25 +4,37 @@
 
 @layer base {
   :root {
-    --background: oklch(0.985 0.002 90);
-    --foreground: oklch(0.12 0.01 60);
-    --card: oklch(0.985 0.002 90);
-    --card-foreground: oklch(0.12 0.01 60);
-    --popover: oklch(0.985 0.002 90);
-    --popover-foreground: oklch(0.12 0.01 60);
-    --primary: oklch(0.12 0.01 60);
-    --primary-foreground: oklch(0.985 0.002 90);
-    --secondary: oklch(0.96 0.002 90);
-    --secondary-foreground: oklch(0.12 0.01 60);
-    --muted: oklch(0.96 0.002 90);
-    --muted-foreground: oklch(0.45 0.01 60);
-    --accent: oklch(0.96 0.002 90);
-    --accent-foreground: oklch(0.12 0.01 60);
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.985 0.002 90);
-    --border: oklch(0.88 0.002 90);
-    --input: oklch(0.88 0.002 90);
-    --ring: oklch(0.12 0.01 60);
+    /* Mahadeva color palette */
+    --canvas: #0E1E1D;
+    --panel: #263434;
+    --white: #FFFFFF;
+    --mint: #8CFFA7;
+    --mint-light: #DCFFE4;
+    --lilac: #EADFFF;
+    --sky: #DCECFF;
+    --butter: #FFE8A8;
+    --muted-text: #8A9A99;
+    
+    /* Theme mappings */
+    --background: #0E1E1D;
+    --foreground: #FFFFFF;
+    --card: #263434;
+    --card-foreground: #FFFFFF;
+    --popover: #263434;
+    --popover-foreground: #FFFFFF;
+    --primary: #FFFFFF;
+    --primary-foreground: #0E1E1D;
+    --secondary: #263434;
+    --secondary-foreground: #FFFFFF;
+    --muted: #263434;
+    --muted-foreground: #8A9A99;
+    --accent: #8CFFA7;
+    --accent-foreground: #0E1E1D;
+    --destructive: #FF6B6B;
+    --destructive-foreground: #FFFFFF;
+    --border: #3A4848;
+    --input: #263434;
+    --ring: #8CFFA7;
     --radius: 0.25rem;
   }
 
@@ -39,23 +51,42 @@
 }
 
 @layer utilities {
-  .grid-lines {
-    background-image: 
-      linear-gradient(to right, oklch(0.88 0.002 90) 0.5px, transparent 0.5px),
-      linear-gradient(to bottom, oklch(0.88 0.002 90) 0.5px, transparent 0.5px);
-    background-size: 32px 32px;
+  /* Floating bars animation */
+  @keyframes float-vertical {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes float-vertical-reverse {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(20px);
+    }
   }
 
-  .noise-overlay {
-    position: relative;
+  .float-bar {
+    animation: float-vertical 8s ease-in-out infinite;
   }
 
-  .noise-overlay::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-    pointer-events: none;
-    opacity: 0.3;
+  .float-bar-reverse {
+    animation: float-vertical-reverse 8s ease-in-out infinite;
+  }
+
+  .delay-1 {
+    animation-delay: 1s;
+  }
+
+  .delay-2 {
+    animation-delay: 2s;
+  }
+
+  .delay-3 {
+    animation-delay: 3s;
   }
 }

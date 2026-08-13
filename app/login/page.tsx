@@ -103,19 +103,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+    <div className="min-h-screen bg-canvas flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-semibold text-foreground">
+          <Link href="/" className="font-body text-[24px] font-medium text-white">
             Signal
           </Link>
         </div>
 
-        <Card className="p-8">
+        <Card className="p-8 bg-panel border-border/50 rounded-sm">
           {mode === 'magic-link' ? (
             <>
-              <h1 className="text-2xl font-semibold mb-2">Sign in with magic link</h1>
-              <p className="text-sm text-muted-foreground mb-6">
+              <h1 className="font-body text-[28px] font-normal tracking-tight text-white mb-2">Sign in with magic link</h1>
+              <p className="font-body text-[14px] text-muted-foreground mb-6">
                 We&apos;ll send you a link to sign in without a password
               </p>
 
@@ -178,8 +178,8 @@ export default function LoginPage() {
             </>
           ) : mode === 'signup' ? (
             <>
-              <h1 className="text-2xl font-semibold mb-2">Create your account</h1>
-              <p className="text-sm text-muted-foreground mb-6">
+              <h1 className="font-body text-[28px] font-normal tracking-tight text-white mb-2">Create your account</h1>
+              <p className="font-body text-[14px] text-muted-foreground mb-6">
                 Get started with Signal
               </p>
 
@@ -272,8 +272,8 @@ export default function LoginPage() {
             </>
           ) : (
             <>
-              <h1 className="text-2xl font-semibold mb-2">Sign in</h1>
-              <p className="text-sm text-muted-foreground mb-6">
+              <h1 className="font-body text-[28px] font-normal tracking-tight text-white mb-2">Sign in</h1>
+              <p className="font-body text-[14px] text-muted-foreground mb-6">
                 Welcome back to Signal
               </p>
 
@@ -340,7 +340,7 @@ export default function LoginPage() {
         </Card>
 
         <div className="text-center mt-6">
-          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/" className="font-body text-[14px] text-muted-foreground hover:text-white transition-colors">
             ← Back to home
           </Link>
         </div>

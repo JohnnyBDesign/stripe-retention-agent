@@ -1,26 +1,20 @@
 import type { Metadata } from 'next';
-import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import { Inter, Almarai } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 
-const instrumentSans = Instrument_Sans({
+// Using Inter as a stand-in for Geist (very similar sans-serif)
+const geist = Inter({
   subsets: ['latin'],
-  variable: '--font-instrument-sans',
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-});
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ['latin'],
-  variable: '--font-instrument-serif',
-  weight: ['400'],
-  display: 'swap',
-  style: ['normal', 'italic'],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  variable: '--font-geist',
   weight: ['400', '500', '600'],
+  display: 'swap',
+});
+
+const almarai = Almarai({
+  subsets: ['arabic'],
+  variable: '--font-almarai',
+  weight: ['400', '700'],
   display: 'swap',
 });
 
@@ -39,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${instrumentSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${geist.variable} ${almarai.variable}`}>
       <body>{children}</body>
     </html>
   );

@@ -9,6 +9,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        canvas: '#0E1E1D',
+        panel: '#263434',
+        mint: '#8CFFA7',
+        'mint-light': '#DCFFE4',
+        lilac: '#EADFFF',
+        sky: '#DCECFF',
+        butter: '#FFE8A8',
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: {
@@ -44,9 +51,8 @@ module.exports = {
         ring: 'var(--ring)',
       },
       fontFamily: {
-        display: ['var(--font-instrument-serif)', 'Georgia', 'serif'],
-        body: ['var(--font-instrument-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains-mono)', 'monospace'],
+        body: ['var(--font-geist)', 'system-ui', 'sans-serif'],
+        nav: ['var(--font-almarai)', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -54,18 +60,18 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       maxWidth: {
-        content: '1200px',
+        content: '1180px',
       },
       fontSize: {
-        'display-xl': ['96px', { lineHeight: '0.95', letterSpacing: '-0.03em' }],
-        'display-lg': ['64px', { lineHeight: '1.0', letterSpacing: '-0.025em' }],
-        'display-md': ['48px', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
-        heading: ['32px', { lineHeight: '1.2', letterSpacing: '-0.015em' }],
-        subheading: ['20px', { lineHeight: '1.4', letterSpacing: '-0.01em' }],
-        body: ['16px', { lineHeight: '1.6', letterSpacing: '0' }],
-        'body-sm': ['14px', { lineHeight: '1.5', letterSpacing: '0' }],
-        caption: ['13px', { lineHeight: '1.4', letterSpacing: '0' }],
-        label: ['11px', { lineHeight: '1.2', letterSpacing: '0.05em' }],
+        'display-xl': ['64px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '400' }],
+        'display-lg': ['48px', { lineHeight: '1.1', letterSpacing: '-0.015em', fontWeight: '400' }],
+        'display-md': ['36px', { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '400' }],
+        'heading': ['24px', { lineHeight: '1.3', letterSpacing: '-0.01em', fontWeight: '500' }],
+        'subheading': ['18px', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
+        'body': ['16px', { lineHeight: '1.6', letterSpacing: '0', fontWeight: '400' }],
+        'body-sm': ['14px', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
+        'caption': ['12px', { lineHeight: '1.4', letterSpacing: '0.02em', fontWeight: '400' }],
+        'label': ['11px', { lineHeight: '1.3', letterSpacing: '0.1em', fontWeight: '400' }],
       },
     },
   },

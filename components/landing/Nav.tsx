@@ -3,29 +3,34 @@ import { Button } from '@/components/ui/button';
 
 export default function Nav() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-canvas/95 backdrop-blur-sm">
       <div className="mx-auto max-w-content px-6 md:px-8">
         <div className="flex h-16 items-center justify-between">
+          {/* Wordmark left */}
           <Link href="/" className="flex items-center">
-            <span className="font-mono text-label uppercase tracking-[0.05em] font-semibold">Signal</span>
+            <span className="font-body text-[18px] font-medium tracking-tight text-white">Signal</span>
           </Link>
           
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="#product" className="font-body text-sm text-muted-foreground hover:text-foreground transition">
-              Product
+          {/* Centered uppercase links with dots */}
+          <div className="hidden md:flex items-center gap-1 absolute left-1/2 transform -translate-x-1/2">
+            <Link href="/scan" className="font-nav text-[11px] uppercase tracking-[0.1em] text-white/70 hover:text-white transition px-3">
+              SCAN
             </Link>
-            <Link href="#how" className="font-body text-sm text-muted-foreground hover:text-foreground transition">
-              How it works
+            <span className="text-white/30">·</span>
+            <Link href="#pricing" className="font-nav text-[11px] uppercase tracking-[0.1em] text-white/70 hover:text-white transition px-3">
+              PRICING
             </Link>
-            <Link href="#pricing" className="font-body text-sm text-muted-foreground hover:text-foreground transition">
-              Pricing
+            <span className="text-white/30">·</span>
+            <Link href="/contact" className="font-nav text-[11px] uppercase tracking-[0.1em] text-white/70 hover:text-white transition px-3">
+              CONTACT
             </Link>
-            <Link href="/contact" className="font-body text-sm text-muted-foreground hover:text-foreground transition">
-              Contact
-            </Link>
-            <Link href="/scan">
-              <Button variant="default" size="default" className="rounded-full">
-                See who&apos;s leaving — and why
+          </div>
+
+          {/* Outlined button right */}
+          <div className="flex items-center gap-3">
+            <Link href="/login">
+              <Button variant="outline" size="sm" className="rounded-sm">
+                LOGIN
               </Button>
             </Link>
           </div>
