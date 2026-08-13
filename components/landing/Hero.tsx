@@ -34,7 +34,7 @@ export default function Hero() {
             </Link>
             <a href="#founding">
               <Button variant="secondary" size="lg">
-                Apply for founding — keep 50% off for 90 days after your first save
+                Apply for founding — keep 50% off for 90 days after first successful enroll
               </Button>
             </a>
           </div>

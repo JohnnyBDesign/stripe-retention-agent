@@ -61,7 +61,7 @@ export default function FinalCta() {
                 size="lg"
                 onClick={() => setShowForm(true)}
               >
-                Apply for founding — keep 50% off for 90 days after your first save
+                Apply for founding — keep 50% off for 90 days after first successful enroll
               </Button>
             </div>
           </Card>
