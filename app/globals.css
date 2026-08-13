@@ -2,8 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  :root {
+    --black: #000000;
+    --surface: #111111;
+    --surface-raised: #1a1a1a;
+    --border: #222222;
+    --border-visible: #333333;
+    --text-disabled: #666666;
+    --text-secondary: #999999;
+    --text-primary: #e8e8e8;
+    --text-display: #ffffff;
+    --accent: #d71921;
+    --accent-subtle: rgba(215, 25, 33, 0.15);
+    --success: #4a9e5c;
+    --warning: #d4a843;
+    --error: #d71921;
+    --interactive: #5b9bf6;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-black text-text-primary font-body;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .dot-grid {
+    background-image: radial-gradient(
+      circle,
+      var(--border-visible) 1px,
+      transparent 1px
+    );
+    background-size: 16px 16px;
+  }
+
+  .dot-grid-subtle {
+    background-image: radial-gradient(
+      circle,
+      var(--border) 0.5px,
+      transparent 0.5px
+    );
+    background-size: 12px 12px;
+  }
 }

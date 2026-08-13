@@ -20,27 +20,31 @@
     "node": ">=20"
   },
   "dependencies": {
-    "next": "^14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "stripe": "^16.2.0",
-    "zod": "^3.23.8",
     "@prisma/client": "^5.17.0",
-    "resend": "^3.5.0",
-    "tailwindcss": "^3.4.6",
-    "postcss": "^8.4.39",
-    "autoprefixer": "^10.4.19",
-    "typescript": "^5.5.4",
     "@types/node": "^20.14.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.5"
+    "eslint-config-next": "^14.2.5",
+    "lucide-react": "^1.31.0",
+    "next": "^14.2.5",
+    "postcss": "^8.4.39",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "resend": "^3.5.0",
+    "stripe": "^16.2.0",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.5.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "prisma": "^5.17.0",
-    "vitest": "^2.0.4",
     "@vitejs/plugin-react": "^4.3.1",
-    "tsx": "^4.16.2"
+    "prisma": "^5.17.0",
+    "tsx": "^4.16.2",
+    "vitest": "^2.0.4"
   }
 }

@@ -1,3 +1,7 @@
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+
 export default function Pricing() {
   const plans = [
     {
@@ -26,70 +30,72 @@ export default function Pricing() {
   ];
 
   return (
-    <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="pricing">
-      {/* Oil painting backdrop with dark overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: 'url(/backdrops/pricing.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div className="absolute inset-0 bg-black/70 pointer-events-none" />
-      
+    <section className="relative py-20 px-6 md:px-8" id="pricing">
       <div className="mx-auto max-w-content relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
+        <div className="mb-16">
+          <h2 className="font-body text-display-lg text-text-display mb-6 font-light">
             Pricing
           </h2>
-          <p className="text-xl text-ink-dim mb-6">Simple, transparent pricing for every stage</p>
-          <p className="text-lg text-ink-subdued">
+          <p className="font-body text-subheading text-text-secondary mb-4 max-w-2xl">
+            Simple, transparent pricing for every stage
+          </p>
+          <p className="font-mono text-caption uppercase tracking-[0.06em] text-text-disabled">
             Founding customers: 50% off for 90 days after first successful enroll<br/>
             Annual: 2 months free
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
           {plans.map((plan) => (
-            <div 
+            <Card 
               key={plan.name}
-              className={`rounded-3xl p-8 border ${
+              className={`p-8 ${
                 plan.highlighted 
-                  ? 'bg-surface border-line-hover' 
-                  : 'bg-surface border-line'
+                  ? 'border-border-visible bg-surface' 
+                  : 'border-border bg-black'
               }`}
             >
-              <h3 className="text-2xl font-bold text-ink mb-2">{plan.name}</h3>
-              <p className="text-ink-dim mb-6">{plan.description}</p>
-              
               <div className="mb-6">
-                <span className="text-5xl font-bold text-ink">${plan.price}</span>
-                <span className="text-ink-dim ml-2">/month</span>
+                <p className="font-mono text-caption uppercase tracking-[0.08em] text-text-disabled mb-2">
+                  {plan.name}
+                </p>
+                <p className="font-body text-body-sm text-text-secondary mb-6">
+                  {plan.description}
+                </p>
               </div>
+              
+              <div className="mb-8">
+                <span className="font-display text-display-lg text-text-display">
+                  ${plan.price}
+                </span>
+                <span className="font-mono text-caption text-text-disabled ml-2">
+                  /MONTH
+                </span>
+              </div>
+
+              <Separator className="mb-6" />
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-ink-dim">
-                    <span className="text-status-green mt-1">✓</span>
-                    <span>{feature}</span>
+                  <li key={feature} className="flex items-start gap-3">
+                    <span className="font-mono text-success mt-1">✓</span>
+                    <span className="font-body text-body-sm text-text-secondary">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <button className={`w-full py-3 font-medium rounded-pill transition ${
-                plan.highlighted
-                  ? 'bg-white text-black hover:bg-white/90'
-                  : 'bg-surface text-ink border border-line hover:bg-panel'
-              }`}>
+              <Button 
+                variant={plan.highlighted ? 'primary' : 'secondary'} 
+                className="w-full"
+              >
                 Get started
-              </button>
-            </div>
+              </Button>
+            </Card>
           ))}
         </div>
 
-        <p className="text-center text-sm text-ink-subdued mt-8">
-          Need custom volume or features? <a href="/contact" className="text-ink underline">Contact us</a>
+        <p className="text-center font-mono text-caption uppercase tracking-[0.06em] text-text-disabled mt-8">
+          Need custom volume or features? <a href="/contact" className="text-text-primary underline">Contact us</a>
         </p>
       </div>
     </section>
