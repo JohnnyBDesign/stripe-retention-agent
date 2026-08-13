@@ -70,8 +70,8 @@ export function getReplyToAddress(): string {
 
 /**
  * Returns whether this reason should trigger an email send.
- * payment_failed and other are display-only.
+ * ONLY payment_failed is display-only. If HITL approves other, send.
  */
 export function shouldSendForReason(reason: ChurnReason): boolean {
-  return reason !== 'payment_failed' && reason !== 'other';
+  return reason !== 'payment_failed';
 }
