@@ -1,8 +1,16 @@
 export default function ProductWindow() {
   return (
     <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="product">
-      {/* Atmospheric backdrop - can be replaced with oil painting background-image */}
-      <div className="absolute inset-0 bg-gradient-to-br from-surface/20 via-canvas to-canvas pointer-events-none opacity-60" />
+      {/* Oil painting backdrop with dark overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/backdrops/product.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div className="absolute inset-0 bg-black/70 pointer-events-none" />
       
       <div className="mx-auto max-w-content relative z-10">
         {/* macOS chrome */}

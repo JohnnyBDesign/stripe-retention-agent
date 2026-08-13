@@ -3,8 +3,16 @@ import Link from 'next/link';
 export default function FinalCta() {
   return (
     <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="founding">
-      {/* Atmospheric backdrop */}
-      <div className="absolute inset-0 bg-gradient-to-br from-surface/40 via-canvas to-canvas pointer-events-none opacity-60" />
+      {/* Oil painting backdrop with dark overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/backdrops/cta.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div className="absolute inset-0 bg-black/70 pointer-events-none" />
       
       <div className="mx-auto max-w-content relative z-10">
         <div className="bg-surface rounded-4xl p-12 md:p-16 border border-line text-center">
