@@ -9,7 +9,6 @@ type ScanResult = {
     failedPayments: number;
     cancellations: number;
     downgrades: number;
-    silent: number;
   };
   reasonBreakdown: Record<string, number>;
   scannedAt: string;
@@ -19,10 +18,8 @@ const REASON_LABELS: Record<string, string> = {
   price: 'Price / Too Expensive',
   bug: 'Bugs / Technical Issues',
   competitor: 'Switched to Competitor',
-  never_activated: 'Never Activated',
   missing_feature: 'Missing Features',
   payment_failed: 'Failed Payments',
-  silent_rescue: 'Silent / Inactive',
   other: 'Other / Unknown',
 };
 
@@ -176,7 +173,7 @@ export default function ScanPage() {
             </>
           ) : (
             <>
-              {/* Results Header */}
+              {/* Results Header - Hero = Cancellations + Why They Left */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-pill bg-surface border border-line text-ink-dim text-xs font-medium mb-6">
                   Scanned {new Date(result.scannedAt).toLocaleDateString()}
@@ -190,41 +187,30 @@ export default function ScanPage() {
                 </p>
               </div>
 
-              {/* Four Split Tiles */}
-              <div className="grid grid-cols-2 gap-3 mb-12">
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
-                    ${result.breakdown.failedPayments.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-ink-dim">Failed</div>
-                </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+              {/* Two Primary Tiles - Cancellations and Downgrades (Hero) */}
+              <div className="grid grid-cols-2 gap-4 mb-12">
+                <div className="bg-surface border border-line rounded-2xl p-6 text-center">
+                  <div className="text-3xl font-bold text-ink mb-2">
                     ${result.breakdown.cancellations.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Cancel</div>
+                  <div className="text-sm text-ink-dim">Cancellations</div>
                 </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
+                <div className="bg-surface border border-line rounded-2xl p-6 text-center">
+                  <div className="text-3xl font-bold text-ink mb-2">
                     ${result.breakdown.downgrades.toLocaleString()}
                   </div>
-                  <div className="text-xs text-ink-dim">Downgrade</div>
-                </div>
-                <div className="bg-surface border border-line rounded-2xl p-5">
-                  <div className="text-2xl font-bold text-ink mb-1">
-                    ${result.breakdown.silent.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-ink-dim">Silent</div>
+                  <div className="text-sm text-ink-dim">Downgrades</div>
                 </div>
               </div>
 
-              {/* Why They Left - Compact Bars */}
+              {/* Why They Left - The Differentiator */}
               <div className="bg-surface border border-line rounded-3xl p-8 mb-8">
                 <h2 className="text-xl font-semibold text-ink mb-6">Why they left</h2>
                 
                 {Object.entries(result.reasonBreakdown).length > 0 ? (
                   <div className="space-y-3">
                     {Object.entries(result.reasonBreakdown)
+                      .filter(([reason]) => reason !== 'payment_failed')
                       .sort(([, a], [, b]) => b - a)
                       .map(([reason, amount]) => {
                         const percentage = (amount / result.totalLeakage) * 100;
@@ -246,10 +232,32 @@ export default function ScanPage() {
                   </div>
                 ) : (
                   <p className="text-ink-dim text-center py-8">
-                    No churn reasons detected in the scanned period.
+                    No cancellation reasons detected in the scanned period.
                   </p>
                 )}
+                
+                {/* Activity signal note */}
+                <div className="mt-6 pt-6 border-t border-line">
+                  <p className="text-xs text-ink-subdued">
+                    Activity signals (silent, never activated) unlock after connecting Signal to your account.
+                  </p>
+                </div>
               </div>
+
+              {/* Failed Payments - Display Only (Not Hero) */}
+              {result.breakdown.failedPayments > 0 && (
+                <div className="bg-panel border border-line rounded-2xl p-5 mb-8">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-ink-dim">Failed payments (display only)</span>
+                    <span className="text-lg font-semibold text-ink">
+                      ${result.breakdown.failedPayments.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-xs text-ink-subdued mt-2">
+                    Dunning requires write access and is handled separately.
+                  </p>
+                </div>
+              )}
 
               {/* Post-Scan CTA */}
               <div className="bg-gradient-to-br from-surface to-panel border border-line rounded-3xl p-8 text-center">

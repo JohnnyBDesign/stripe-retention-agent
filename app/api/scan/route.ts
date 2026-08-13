@@ -3,6 +3,8 @@ import Stripe from 'stripe';
 import { ChurnReason } from '@/lib/types';
 
 // Helper to classify cancellation reason from Stripe's cancellation_details
+// Note: silent_rescue and never_activated require activity data and cannot be
+// detected from Stripe-only data. They're omitted from 60-second scan.
 function classifyCancelReason(
   cancelDetails: Stripe.Subscription.CancellationDetails | null | undefined,
   comment: string | null | undefined
@@ -31,7 +33,8 @@ function classifyCancelReason(
   if (feedback === 'switched_service') return 'competitor';
   if (feedback === 'customer_service') return 'bug';
   if (feedback === 'low_quality') return 'bug';
-  if (feedback === 'unused') return 'never_activated';
+  // Note: 'unused' requires activity tracking, not available in scan
+  // if (feedback === 'unused') return 'never_activated';
 
   return 'other';
 }
@@ -106,21 +109,19 @@ export async function POST(request: NextRequest) {
     const ninetyDaysAgo = Math.floor(Date.now() / 1000) - (90 * 24 * 60 * 60);
 
     // Track revenue leakage by category
+    // Note: silent/never_activated require activity data, not available in 60s scan
     const leakage = {
       failedPayments: 0,
       cancellations: 0,
       downgrades: 0,
-      silent: 0,
     };
 
-    // Track reasons with dollar amounts
-    const reasonBreakdown: Record<ChurnReason, number> = {
+    // Track reasons with dollar amounts (omit silent_rescue, never_activated - need activity data)
+    const reasonBreakdown: Record<string, number> = {
       price: 0,
       bug: 0,
       competitor: 0,
-      never_activated: 0,
       missing_feature: 0,
-      silent_rescue: 0,
       payment_failed: 0,
       other: 0,
     };
@@ -175,11 +176,9 @@ export async function POST(request: NextRequest) {
       const comment = sub.cancellation_details?.comment;
       const reason = classifyCancelReason(sub.cancellation_details, comment);
       
-      // Track silent separately
-      if (reason === 'silent_rescue') {
-        leakage.silent += subMRR;
+      if (!reasonBreakdown[reason]) {
+        reasonBreakdown[reason] = 0;
       }
-      
       reasonBreakdown[reason] += subMRR;
     }
 
@@ -204,11 +203,9 @@ export async function POST(request: NextRequest) {
         const comment = sub.cancellation_details?.comment;
         const reason = classifyCancelReason(sub.cancellation_details, comment);
         
-        // Track silent separately
-        if (reason === 'silent_rescue') {
-          leakage.silent += subMRR;
+        if (!reasonBreakdown[reason]) {
+          reasonBreakdown[reason] = 0;
         }
-        
         reasonBreakdown[reason] += subMRR;
       }
     }
@@ -250,8 +247,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate total leakage
-    const totalLeakage = leakage.failedPayments + leakage.cancellations + leakage.downgrades + leakage.silent;
+    // Calculate total leakage (hero = cancellations + downgrades; failed payments display only)
+    const totalLeakage = leakage.cancellations + leakage.downgrades;
 
     // Return scan results
     return NextResponse.json({
@@ -260,7 +257,6 @@ export async function POST(request: NextRequest) {
         failedPayments: Math.round(leakage.failedPayments * 100) / 100,
         cancellations: Math.round(leakage.cancellations * 100) / 100,
         downgrades: Math.round(leakage.downgrades * 100) / 100,
-        silent: Math.round(leakage.silent * 100) / 100,
       },
       reasonBreakdown: Object.fromEntries(
         Object.entries(reasonBreakdown)
