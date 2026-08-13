@@ -86,7 +86,7 @@ export default function ScanPage() {
               {/* Header */}
               <div className="mb-12">
                 <h1 className="font-display text-display-lg md:text-display-xl font-medium text-text-display mb-4 tracking-tight">
-                  See who&apos;s leaving — and why
+                  See the MRR walking out — and the reason it left.
                 </h1>
                 <p className="font-body text-subheading text-text-secondary leading-relaxed">
                   60 seconds. Restricted read key. Never stored.
@@ -162,7 +162,7 @@ export default function ScanPage() {
                   size="lg"
                   className="w-full"
                 >
-                  {loading ? 'Scanning 90 days...' : 'Scan 90 days'}
+                  {loading ? 'Scanning...' : 'Scan my Stripe'}
                 </Button>
               </form>
 
