@@ -250,8 +250,8 @@ export async function POST(request: NextRequest) {
       },
       reasonBreakdown: Object.fromEntries(
         Object.entries(reasonBreakdown)
-          .map(([reason, amount]) => [reason, Math.round(amount * 100) / 100])
-          .filter(([, amount]) => amount > 0)
+          .map(([reason, amount]): [string, number] => [reason, Math.round(amount * 100) / 100])
+          .filter(([, amount]) => (amount as number) > 0)
       ),
       scannedAt: new Date().toISOString(),
     });
