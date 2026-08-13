@@ -244,7 +244,7 @@ function QueueContent() {
               <button
                 onClick={handleApprove}
                 className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={editedReason === 'payment_failed' || editedReason === 'other'}
+                disabled={editedReason === 'payment_failed'}
               >
                 Approve & Send
               </button>
@@ -266,9 +266,9 @@ function QueueContent() {
               >
                 Snooze 24h
               </button>
-              {(editedReason === 'payment_failed' || editedReason === 'other') && (
-                <p className="text-sm text-green-600 self-center">
-                  Cannot auto-send {editedReason} cases. Override reason or reject.
+              {editedReason === 'payment_failed' && (
+                <p className="text-sm text-muted-foreground self-center">
+                  Cannot send payment_failed cases. Override reason or reject.
                 </p>
               )}
             </div>

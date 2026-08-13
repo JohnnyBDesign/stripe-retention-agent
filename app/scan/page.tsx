@@ -85,11 +85,11 @@ export default function ScanPage() {
             <>
               {/* Header */}
               <div className="mb-12">
-                <h1 className="font-display text-display-lg md:text-display-xl font-medium text-text-display mb-4 tracking-tight">
-                  See the MRR walking out — and the reason it left.
+                <h1 className="font-display text-display-lg md:text-display-xl font-normal mb-4 tracking-tight">
+                  See who&apos;s leaving — and why.
                 </h1>
-                <p className="font-body text-subheading text-text-secondary leading-relaxed">
-                  60 seconds. Restricted read key. Never stored.
+                <p className="font-body text-subheading text-muted-foreground leading-relaxed">
+                  60 seconds. Restricted read key. Never stored. $99 includes sending.
                 </p>
               </div>
 
