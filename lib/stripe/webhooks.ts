@@ -1,7 +1,59 @@
 import { prisma } from '@/lib/db';
-import { stripe, getSubscriptionInfo, getCustomerActivity } from '@/lib/stripe/client';
+import { stripe, getSubscriptionInfo, getCustomerActivity, getStripeClientByAccount } from '@/lib/stripe/client';
 import { classifyChurn } from '@/lib/classifier';
 import Stripe from 'stripe';
+
+/**
+ * Determines the userId for a Stripe event based on the account ID.
+ * Returns null for legacy/admin events.
+ */
+async function getUserIdFromEvent(event: Stripe.Event): Promise<string | null> {
+  // For events from connected accounts, event.account will be set
+  // For events from the platform account, event.account will be null
+  
+  // Try to get account ID from the event
+  let stripeAccountId: string | null = null;
+  
+  if (event.account) {
+    stripeAccountId = event.account as string;
+  }
+  
+  // If no account in event, try to get it from the data object
+  if (!stripeAccountId && event.data.object) {
+    const obj = event.data.object as any;
+    
+    // For subscriptions and invoices, we can check the customer
+    if (obj.customer) {
+      const customerId = typeof obj.customer === 'string' ? obj.customer : obj.customer.id;
+      
+      // Look up which user owns this customer
+      const activity = await prisma.customerActivity.findFirst({
+        where: { stripeCustomerId: customerId },
+        select: { userId: true },
+      });
+      
+      if (activity?.userId) {
+        return activity.userId;
+      }
+    }
+  }
+  
+  if (!stripeAccountId) {
+    // No account ID found - this is a legacy/admin event
+    return null;
+  }
+  
+  // Look up the user by Stripe account ID
+  const connection = await prisma.stripeConnection.findFirst({
+    where: {
+      stripeAccountId,
+      isActive: true,
+    },
+    select: { userId: true },
+  });
+  
+  return connection?.userId || null;
+}
 
 export async function processStripeEvent(event: Stripe.Event): Promise<void> {
   const existingEvent = await prisma.stripeEvent.findUnique({
@@ -13,17 +65,21 @@ export async function processStripeEvent(event: Stripe.Event): Promise<void> {
     return;
   }
 
+  // Determine userId for this event
+  const userId = await getUserIdFromEvent(event);
+
   await prisma.stripeEvent.create({
     data: {
       stripeEventId: event.id,
       type: event.type,
       payload: event as any,
       processed: false,
+      userId,
     },
   });
 
   try {
-    await handleEvent(event);
+    await handleEvent(event, userId);
 
     await prisma.stripeEvent.update({
       where: { stripeEventId: event.id },
@@ -35,23 +91,23 @@ export async function processStripeEvent(event: Stripe.Event): Promise<void> {
   }
 }
 
-async function handleEvent(event: Stripe.Event): Promise<void> {
+async function handleEvent(event: Stripe.Event, userId: string | null): Promise<void> {
   switch (event.type) {
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
-      await handleSubscriptionChange(event.data.object as Stripe.Subscription, event.id);
+      await handleSubscriptionChange(event.data.object as Stripe.Subscription, event.id, userId);
       break;
 
     case 'invoice.payment_failed':
-      await handlePaymentFailed(event.data.object as Stripe.Invoice);
+      await handlePaymentFailed(event.data.object as Stripe.Invoice, userId);
       break;
 
     case 'invoice.upcoming':
-      await handleUpcomingInvoice(event.data.object as Stripe.Invoice, event.id);
+      await handleUpcomingInvoice(event.data.object as Stripe.Invoice, event.id, userId);
       break;
 
     case 'charge.refunded':
-      await handleChargeRefunded(event.data.object as Stripe.Charge, event.id);
+      await handleChargeRefunded(event.data.object as Stripe.Charge, event.id, userId);
       break;
 
     default:
@@ -59,15 +115,22 @@ async function handleEvent(event: Stripe.Event): Promise<void> {
   }
 }
 
-async function handleSubscriptionChange(subscription: Stripe.Subscription, eventId: string): Promise<void> {
+async function handleSubscriptionChange(subscription: Stripe.Subscription, eventId: string, userId: string | null): Promise<void> {
   const isCanceled = subscription.status === 'canceled' || subscription.cancel_at_period_end;
   
   if (!isCanceled) {
     return;
   }
 
-  const subscriptionInfo = await getSubscriptionInfo(subscription.id);
-  const activity = await getCustomerActivity(subscriptionInfo.customerId);
+  // Get the appropriate Stripe client
+  const stripeClient = userId ? await getUserStripeClient(userId) : stripe;
+  if (!stripeClient) {
+    console.error(`No Stripe client found for userId ${userId}`);
+    return;
+  }
+
+  const subscriptionInfo = await getSubscriptionInfo(subscription.id, stripeClient);
+  const activity = await getCustomerActivity(subscriptionInfo.customerId, userId);
   
   const tenureDays = Math.ceil(
     (Date.now() - subscriptionInfo.createdAt.getTime()) / (1000 * 60 * 60 * 24)
@@ -85,6 +148,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription, event
       customerId: subscriptionInfo.customerId,
       subscriptionId: subscription.id,
       state: 'pending',
+      ...(userId ? { userId } : {}),
     },
   });
 
@@ -95,6 +159,7 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription, event
 
   await prisma.retentionCase.create({
     data: {
+      userId,
       customerId: subscriptionInfo.customerId,
       customerEmail: subscriptionInfo.customerEmail,
       subscriptionId: subscription.id,
@@ -114,21 +179,27 @@ async function handleSubscriptionChange(subscription: Stripe.Subscription, event
     },
   });
 
-  console.log(`Created retention case for customer ${subscriptionInfo.customerId}`);
+  console.log(`Created retention case for customer ${subscriptionInfo.customerId}, userId: ${userId || 'legacy'}`);
 }
 
-async function handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
+async function handlePaymentFailed(invoice: Stripe.Invoice, userId: string | null): Promise<void> {
   console.log(`Payment failed for invoice ${invoice.id} - dunning stub only`);
 }
 
-async function handleUpcomingInvoice(invoice: Stripe.Invoice, eventId: string): Promise<void> {
+async function handleUpcomingInvoice(invoice: Stripe.Invoice, eventId: string, userId: string | null): Promise<void> {
   if (!invoice.subscription) {
     return;
   }
 
-  const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
-  const subscriptionInfo = await getSubscriptionInfo(subscription.id);
-  const activity = await getCustomerActivity(subscriptionInfo.customerId);
+  const stripeClient = userId ? await getUserStripeClient(userId) : stripe;
+  if (!stripeClient) {
+    console.error(`No Stripe client found for userId ${userId}`);
+    return;
+  }
+
+  const subscription = await stripeClient.subscriptions.retrieve(invoice.subscription as string);
+  const subscriptionInfo = await getSubscriptionInfo(subscription.id, stripeClient);
+  const activity = await getCustomerActivity(subscriptionInfo.customerId, userId);
 
   const tenureDays = Math.ceil(
     (Date.now() - subscriptionInfo.createdAt.getTime()) / (1000 * 60 * 60 * 24)
@@ -161,12 +232,14 @@ async function handleUpcomingInvoice(invoice: Stripe.Invoice, eventId: string): 
           customerId: subscriptionInfo.customerId,
           subscriptionId: subscription.id,
           state: 'pending',
+          ...(userId ? { userId } : {}),
         },
       });
 
       if (!existingCase) {
         await prisma.retentionCase.create({
           data: {
+            userId,
             customerId: subscriptionInfo.customerId,
             customerEmail: subscriptionInfo.customerEmail,
             subscriptionId: subscription.id,
@@ -186,26 +259,32 @@ async function handleUpcomingInvoice(invoice: Stripe.Invoice, eventId: string): 
           },
         });
 
-        console.log(`Created silent rescue case for customer ${subscriptionInfo.customerId}`);
+        console.log(`Created silent rescue case for customer ${subscriptionInfo.customerId}, userId: ${userId || 'legacy'}`);
       }
     }
   }
 }
 
-async function handleChargeRefunded(charge: Stripe.Charge, eventId: string): Promise<void> {
+async function handleChargeRefunded(charge: Stripe.Charge, eventId: string, userId: string | null): Promise<void> {
   if (!charge.customer) {
     console.log(`Charge ${charge.id} has no customer, skipping`);
     return;
   }
 
+  const stripeClient = userId ? await getUserStripeClient(userId) : stripe;
+  if (!stripeClient) {
+    console.error(`No Stripe client found for userId ${userId}`);
+    return;
+  }
+
   const customerId = typeof charge.customer === 'string' ? charge.customer : charge.customer.id;
-  const customer = await stripe.customers.retrieve(customerId);
+  const customer = await stripeClient.customers.retrieve(customerId);
   
   if (customer.deleted) {
     return;
   }
 
-  const subscriptions = await stripe.subscriptions.list({
+  const subscriptions = await stripeClient.subscriptions.list({
     customer: customerId,
     limit: 1,
   });
@@ -215,8 +294,8 @@ async function handleChargeRefunded(charge: Stripe.Charge, eventId: string): Pro
     return;
   }
 
-  const subscriptionInfo = await getSubscriptionInfo(subscription.id);
-  const activity = await getCustomerActivity(customerId);
+  const subscriptionInfo = await getSubscriptionInfo(subscription.id, stripeClient);
+  const activity = await getCustomerActivity(customerId, userId);
   
   const tenureDays = Math.ceil(
     (Date.now() - subscriptionInfo.createdAt.getTime()) / (1000 * 60 * 60 * 24)
@@ -230,6 +309,7 @@ async function handleChargeRefunded(charge: Stripe.Charge, eventId: string): Pro
 
   await prisma.retentionCase.create({
     data: {
+      userId,
       customerId,
       customerEmail: customer.email || '',
       subscriptionId: subscription.id,
@@ -249,5 +329,11 @@ async function handleChargeRefunded(charge: Stripe.Charge, eventId: string): Pro
     },
   });
 
-  console.log(`Created refund retention case for customer ${customerId} with 4h SLA`);
+  console.log(`Created refund retention case for customer ${customerId}, userId: ${userId || 'legacy'} with 4h SLA`);
+}
+
+// Helper function to get user-specific Stripe client (imported from client.ts)
+async function getUserStripeClient(userId: string): Promise<Stripe | null> {
+  const { getUserStripeClient: getClient } = await import('@/lib/stripe/client');
+  return getClient(userId);
 }

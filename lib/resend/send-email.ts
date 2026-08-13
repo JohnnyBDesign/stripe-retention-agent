@@ -24,6 +24,7 @@ export interface SendRetentionEmailParams {
 
 /**
  * Sends a retention email using Signal's Resend account.
+ * Plain text only - no HTML, no pixels, no footer.
  * Sets Reply-To to the provided address (founder/workspace, never the customer).
  */
 export async function sendRetentionEmail(params: SendRetentionEmailParams): Promise<string> {
@@ -34,11 +35,12 @@ export async function sendRetentionEmail(params: SendRetentionEmailParams): Prom
   // Default from address - Signal's domain
   const from = process.env.RESEND_FROM_EMAIL || 'Signal <onboarding@resend.dev>';
   
+  // Send as plain text only - no HTML, no tracking pixels, no footer
   const emailParams: any = {
     from,
     to,
     subject,
-    html: body,
+    text: body, // Plain text only
     reply_to: replyTo,
   };
   
@@ -53,16 +55,19 @@ export async function sendRetentionEmail(params: SendRetentionEmailParams): Prom
 
 /**
  * Gets the Reply-To address for retention emails.
- * Priority: 1) FOUNDER_REPLY_TO (required for v0)
- *          2) Future: workspace/onboard replyTo
- *          3) Future: Stripe connected-account email
+ * In multi-tenant mode, this is passed in from the user's settings.
+ * Fallback to FOUNDER_REPLY_TO for backward compatibility.
  * NEVER returns the customer email.
  */
-export function getReplyToAddress(): string {
+export function getReplyToAddress(userReplyTo?: string): string {
+  if (userReplyTo) {
+    return userReplyTo;
+  }
+  
   const founderReplyTo = process.env.FOUNDER_REPLY_TO;
   
   if (!founderReplyTo) {
-    throw new Error('FOUNDER_REPLY_TO is required to send retention emails');
+    throw new Error('Reply-To email is required to send retention emails');
   }
   
   return founderReplyTo;
