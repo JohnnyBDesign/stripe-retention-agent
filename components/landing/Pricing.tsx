@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -84,12 +85,14 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <Button 
-                variant={plan.highlighted ? 'primary' : 'secondary'} 
-                className="w-full"
-              >
-                Get started
-              </Button>
+              <Link href="/scan">
+                <Button 
+                  variant={plan.highlighted ? 'primary' : 'secondary'} 
+                  className="w-full"
+                >
+                  Get started
+                </Button>
+              </Link>
             </Card>
           ))}
         </div>

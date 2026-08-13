@@ -96,3 +96,15 @@ model ActivityEvent {
   @@index([customerId])
   @@index([occurredAt])
 }
+
+model FoundingApplication {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String
+  mrrBand   String
+  createdAt DateTime @default(now())
+  
+  @@index([email])
+  @@index([createdAt])
+}

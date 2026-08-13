@@ -35,11 +35,6 @@ export default function Footer() {
                   Pricing
                 </Link>
               </li>
-              <li>
-                <Link href="/queue" className="font-body text-body-sm text-text-secondary hover:text-text-primary transition">
-                  HITL Queue
-                </Link>
-              </li>
             </ul>
           </div>
 
