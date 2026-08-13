@@ -2,13 +2,16 @@ import Link from 'next/link';
 
 export default function FinalCta() {
   return (
-    <section className="relative py-20 px-6 md:px-8" id="founding">
-      <div className="mx-auto max-w-content">
-        <div className="bg-charcoal rounded-4xl p-12 md:p-16 border border-line text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+    <section className="relative py-20 px-6 md:px-8 overflow-hidden" id="founding">
+      {/* Atmospheric backdrop */}
+      <div className="absolute inset-0 bg-gradient-to-br from-surface/40 via-canvas to-canvas pointer-events-none opacity-60" />
+      
+      <div className="mx-auto max-w-content relative z-10">
+        <div className="bg-surface rounded-4xl p-12 md:p-16 border border-line text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-6">
             Get your first HITL card this week
           </h2>
-          <p className="text-xl text-gray mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-ink-dim mb-8 max-w-2xl mx-auto">
             Add your Stripe keys, configure webhooks, and see your first classified 
             churn reason by Friday. Week 1 average: too_expensive → ret_price.
           </p>
@@ -22,7 +25,7 @@ export default function FinalCta() {
             </Link>
             <Link 
               href="/queue"
-              className="px-8 py-4 bg-charcoal text-white text-base font-medium rounded-pill hover:bg-panel transition border border-line"
+              className="px-8 py-4 bg-surface text-ink text-base font-medium rounded-pill hover:bg-panel transition border border-line"
             >
               Open HITL queue
             </Link>
