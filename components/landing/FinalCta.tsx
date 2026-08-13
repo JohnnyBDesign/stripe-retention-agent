@@ -62,7 +62,7 @@ export default function FinalCta() {
                 onClick={() => setShowForm(true)}
                 className="rounded-full"
               >
-                Apply for founding — keep 50% off for 90 days after first successful send
+                Apply for founding — keep 50% off 90d after first save
               </Button>
             </div>
           </Card>
@@ -73,7 +73,7 @@ export default function FinalCta() {
                 Apply for Founding
               </h2>
               <p className="font-body text-subheading text-muted-foreground mb-10 text-center">
-                Keep 50% off for 90 days after your first successful send.
+                Keep 50% off 90d after first save.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">

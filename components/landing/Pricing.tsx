@@ -10,9 +10,9 @@ export default function Pricing() {
       price: 99,
       description: 'For early-stage SaaS testing retention plays',
       features: [
-        '≤100 approved sends/mo',
-        '1 approval seat',
-        'Sending included',
+        '$99 includes sending',
+        '≤100 approved sends',
+        '1 seat',
         'Email support',
       ],
     },
@@ -21,9 +21,9 @@ export default function Pricing() {
       price: 249,
       description: 'For scaling SaaS with high churn volume',
       features: [
-        '≤500 approved sends/mo',
-        '3 approval seats',
-        'Sending included',
+        '$249 includes sending',
+        '≤500 approved sends',
+        '3 seats',
         'Priority support',
       ],
       highlighted: true,
@@ -41,7 +41,7 @@ export default function Pricing() {
             Simple, transparent pricing. Sending included.
           </p>
           <p className="font-mono text-label uppercase tracking-[0.05em] text-muted-foreground">
-            Founding customers: 50% off for 90 days after first successful send<br/>
+            Founding: 50% off 90d after first save<br/>
             Annual: 2 months free · Stripe required
           </p>
         </div>
