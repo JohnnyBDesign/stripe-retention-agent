@@ -83,7 +83,7 @@ export async function PATCH(
 
     if (state === 'approved' || state === 'edited_approved') {
       const effectiveReason = updated.overrideReason || updated.reason;
-      const { sendRetentionEmail, shouldSendForReason } = await import('@/lib/resend/send-email');
+      const { sendRetentionEmail, shouldSendForReason, getReplyToAddress } = await import('@/lib/resend/send-email');
       
       try {
         // Check if this reason should trigger an email send
@@ -115,14 +115,15 @@ export async function PATCH(
         });
 
         if (!existingSend) {
-          // Send the retention email from Signal's Resend account
-          const founderEmail = process.env.FOUNDER_EMAIL;
+          // Get Reply-To address (founder/workspace, NEVER the customer)
+          const replyTo = getReplyToAddress();
           
+          // Send the retention email from Signal's Resend account
           const emailId = await sendRetentionEmail({
             to: updated.customerEmail,
             subject: updated.subjectDraft,
             body: updated.bodyDraft,
-            founderEmail,
+            replyTo,
           });
 
           // Track that we sent this email (for idempotency)
@@ -137,7 +138,7 @@ export async function PATCH(
             },
           });
           
-          console.log(`Sent retention email to ${updated.customerEmail} (emailId: ${emailId}, reason: ${effectiveReason})`);
+          console.log(`Sent retention email to ${updated.customerEmail} (emailId: ${emailId}, reason: ${effectiveReason}, replyTo: ${replyTo})`);
         } else {
           console.log(`Email already sent for customer ${updated.customerId} with reason ${effectiveReason} and event ${triggerEventId}`);
         }
