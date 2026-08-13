@@ -28,7 +28,7 @@ export default function Hero() {
 
           {/* Subhead - clarify Signal is independent/third-party */}
           <p className="text-xl md:text-2xl text-ink-dim leading-relaxed mb-10 max-w-2xl mx-auto">
-            Independent retention agent for SaaS founders who bill on Stripe — classify, you approve, enroll your Resend.
+            See why subscribers cancel or go quiet, then approve the save before anything sends. Built for founders who bill on Stripe — your Resend, your call. Independent product, not made by Stripe.
           </p>
 
           {/* CTAs */}
@@ -37,19 +37,19 @@ export default function Hero() {
               href="#pricing"
               className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
             >
-              Start with Stripe keys → get your first HITL card
+              See who&apos;s leaving — and why
             </Link>
             <Link 
               href="#founding"
               className="px-8 py-4 bg-surface text-ink text-base font-medium rounded-pill hover:bg-panel transition border border-line"
             >
-              Apply for founding — 50% off 90 days after first successful enroll
+              Apply for founding — keep 50% off for 90 days after your first save
             </Link>
           </div>
 
           {/* Trust line */}
           <p className="text-sm text-ink-subdued">
-            Human-in-the-loop · Resend segments · No auto-sends
+            You approve every save · Your Resend segments · No auto-sends
           </p>
         </div>
       </div>
