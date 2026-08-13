@@ -5,10 +5,9 @@ export default function Pricing() {
       price: 99,
       description: 'For early-stage SaaS testing retention plays',
       features: [
-        'Up to 500 HITL cards/month',
-        'All reason classifiers',
-        'Resend segment enrollment',
-        'Email support',
+        '≤100 approved enrolls/mo',
+        '1 HITL seat',
+        'Resend segments',
       ],
     },
     {
@@ -16,11 +15,9 @@ export default function Pricing() {
       price: 249,
       description: 'For scaling SaaS with high churn volume',
       features: [
-        'Unlimited HITL cards',
-        'All reason classifiers',
-        'Resend segment enrollment',
+        '≤500 approved enrolls/mo',
+        '3 HITL seats',
         'Priority support',
-        'Custom playbook mapping',
       ],
       highlighted: true,
     },
