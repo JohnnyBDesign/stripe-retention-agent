@@ -277,7 +277,7 @@ export default function ScanPage() {
                   Get these in a queue you approve
                 </h3>
                 <p className="font-body text-body text-muted-foreground mb-6 max-w-lg mx-auto">
-                  You approve. Signal sends. Replies go to you.
+                  You approve. Signal sends. Replies go to you. No auto-sends.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link href="/#pricing">
