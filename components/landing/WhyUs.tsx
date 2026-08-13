@@ -6,7 +6,7 @@ export default function WhyUs() {
       <div className="mx-auto max-w-content">
         <Card className="p-12 md:p-16 bg-surface border-border">
           <div className="max-w-3xl">
-            <h2 className="font-body text-display-md text-text-display mb-6 font-light">
+            <h2 className="font-display text-display-md text-text-display mb-6 font-medium">
               Approve every enroll like a teammate.
             </h2>
             <p className="font-body text-subheading text-text-secondary leading-relaxed">

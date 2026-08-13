@@ -26,7 +26,7 @@ module.exports = {
         interactive: '#5B9BF6',
       },
       fontFamily: {
-        display: ['var(--font-space-mono)', 'monospace'],
+        display: ['var(--font-doto)', 'var(--font-space-mono)', 'monospace'],
         body: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-space-mono)', 'monospace'],
       },

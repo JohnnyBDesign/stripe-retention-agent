@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
+
   :root {
+    --font-doto: 'Doto', monospace;
     --black: #000000;
     --surface: #111111;
     --surface-raised: #1a1a1a;
