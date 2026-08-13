@@ -6,7 +6,11 @@ const nextConfig = {
       {
         source: '/get-started',
         destination: '/scan',
+<<<<<<< HEAD
         permanent: false,
+=======
+        permanent: true,
+>>>>>>> efb8c80 (feat: add redirects and verify Revenue Lead requirements)
       },
       {
         source: '/founding',
