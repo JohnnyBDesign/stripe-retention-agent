@@ -26,10 +26,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Signal — Stripe churn, classified and saved',
-  description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and sends after you approve. Sending included.',
+  description: 'You approve. Signal sends. Replies go to you. $99 includes email. Connect Stripe, not an ESP.',
   openGraph: {
     title: 'Signal — Stripe churn, classified and saved',
-    description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and sends after you approve. Sending included.',
+    description: 'You approve. Signal sends. Replies go to you. $99 includes email. Connect Stripe, not an ESP.',
   },
 };
 
