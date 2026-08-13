@@ -19,8 +19,8 @@ export default function HowItWorks() {
     },
     {
       number: '4',
-      title: 'We send it',
-      description: 'After approval, Signal sends from our Resend. Reply-to is set to you. No ESP key needed from you.',
+      title: 'Signal sends',
+      description: 'After approval, Signal sends the save. Sending included. Replies go to you. No ESP key needed.',
     },
   ];
 

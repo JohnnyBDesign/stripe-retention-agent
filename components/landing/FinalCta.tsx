@@ -44,10 +44,10 @@ export default function FinalCta() {
         {!showForm ? (
           <Card className="p-12 md:p-16 text-center">
             <h2 className="font-display text-display-md mb-6 font-normal">
-              See why they cancel, approve the save
+              See why they cancel, approve the send
             </h2>
             <p className="font-body text-subheading text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Built for founders who bill on Stripe. You approve every save before we send. We send from our Resend — reply-to goes to you. No ESP key needed.
+              Built for founders who bill on Stripe. You approve every send. Sending included. Replies go to you. No ESP key needed.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

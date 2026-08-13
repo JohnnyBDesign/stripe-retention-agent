@@ -46,7 +46,7 @@ export default function ProductWindow() {
                   Classification
                 </p>
                 <p className="font-mono text-sm text-muted-foreground">
-                  ret_price · Signal will send from our Resend
+                  ret_price · Signal sends, reply-to = you
                 </p>
               </div>
 

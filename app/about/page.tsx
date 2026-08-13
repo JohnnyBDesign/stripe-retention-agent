@@ -22,20 +22,20 @@ export default function AboutPage() {
             <div className="space-y-6 font-body text-body text-text-secondary">
               <p>
                 Signal is a retention agent for SaaS companies that bill on Stripe. We help you understand 
-                why customers cancel or go silent, and draft personalized retention playbooks that you 
-                approve before they send.
+                why customers cancel or go silent, and draft personalized retention emails that you 
+                approve before Signal sends.
               </p>
 
               <p>
                 Signal monitors your Stripe billing data for churn signals, classifies cancellation reasons, 
                 identifies silent renewers at risk, and automatically drafts retention emails tailored to each 
-                situation. Every playbook goes through your approval queue — nothing sends without your 
+                situation. Every draft goes through your approval queue — nothing sends without your 
                 explicit approval.
               </p>
 
               <p>
-                Once you approve a playbook, Signal enrolls the customer in the appropriate segment in your 
-                Resend account, where you control the actual email sequences and timing. Your Resend, your call.
+                Once you approve a draft, Signal sends the email. Sending is included in your subscription. 
+                Replies go to you. No ESP key needed from you.
               </p>
 
               <div className="pt-6 mt-6 border-t border-border">

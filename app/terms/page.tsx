@@ -38,11 +38,11 @@ export default function TermsPage() {
               <ul className="space-y-2 mb-4 ml-6">
                 <li className="flex gap-2">
                   <span className="text-text-disabled">•</span>
-                  <span><strong className="text-text-primary">Starter</strong>: $99/month for ≤100 approved enrolls per month, 1 HITL seat</span>
+                  <span><strong className="text-text-primary">Starter</strong>: $99/month for ≤100 approved sends per month, 1 approval seat, sending included</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-text-disabled">•</span>
-                  <span><strong className="text-text-primary">Growth</strong>: $249/month for ≤500 approved enrolls per month, 3 HITL seats</span>
+                  <span><strong className="text-text-primary">Growth</strong>: $249/month for ≤500 approved sends per month, 3 approval seats, sending included</span>
                 </li>
               </ul>
               <p className="mb-4">
@@ -56,8 +56,8 @@ export default function TermsPage() {
               </h2>
               <p className="mb-4">
                 Founding customers who sign up during the founding period receive 50% off their selected plan 
-                for 90 days, starting from the date of their first successful enroll (first approved retention 
-                playbook that sends to a customer). After 90 days, the subscription automatically renews at 
+                for 90 days, starting from the date of their first successful send (first approved retention 
+                email that Signal sends to a customer). After 90 days, the subscription automatically renews at 
                 standard pricing.
               </p>
             </section>
@@ -68,9 +68,9 @@ export default function TermsPage() {
               </h2>
               <p className="mb-4">
                 Signal monitors your Stripe account for churn signals, classifies cancellation reasons and 
-                identifies silent renewers, drafts retention playbooks, and submits them to your approval queue. 
-                You review and approve each playbook before it enrolls the customer in the appropriate Resend 
-                segment. Signal does not send emails automatically — all sends require your explicit approval.
+                identifies silent renewers, drafts retention emails, and submits them to your approval queue. 
+                You review and approve each draft before Signal sends. Sending is included in your subscription. 
+                Signal does not send emails automatically — all sends require your explicit approval.
               </p>
             </section>
 
@@ -84,15 +84,11 @@ export default function TermsPage() {
               <ul className="space-y-2 mb-4 ml-6">
                 <li className="flex gap-2">
                   <span className="text-text-disabled">•</span>
-                  <span>Providing a valid Stripe restricted API key with read access to billing data</span>
+                  <span>Connecting your Stripe account for billing data access</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-text-disabled">•</span>
-                  <span>Maintaining an active Resend account and API key for email segment enrollment</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-text-disabled">•</span>
-                  <span>Reviewing and approving retention playbooks in a timely manner</span>
+                  <span>Reviewing and approving retention drafts in a timely manner</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-text-disabled">•</span>

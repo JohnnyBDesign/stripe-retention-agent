@@ -26,7 +26,7 @@ export default function Hero() {
 
             {/* Subhead */}
             <p className="font-body text-subheading text-muted-foreground leading-relaxed mb-10 max-w-xl">
-              Signal classifies Stripe churn, drafts personalized saves, and sends after your approval. We send from our Resend. Reply-to goes to you. Independent product, not made by Stripe.
+              Signal classifies Stripe churn, drafts personalized saves, and sends after your approval. Sending included. Replies go to you. Independent product, not made by Stripe.
             </p>
 
             {/* CTAs */}
@@ -40,7 +40,7 @@ export default function Hero() {
 
             {/* Trust line */}
             <p className="font-mono text-label uppercase tracking-[0.05em] text-muted-foreground">
-              You approve every save. We send it. Reply-to goes to you.
+              You approve every send · replies to you · no cancel widget
             </p>
           </div>
 

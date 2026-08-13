@@ -26,10 +26,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Signal — Stripe churn, classified and saved',
-  description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and enrolls the playbook in your Resend — after you approve.',
+  description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and sends after you approve. Sending included.',
   openGraph: {
     title: 'Signal — Stripe churn, classified and saved',
-    description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and enrolls the playbook in your Resend — after you approve.',
+    description: 'A churn agent that classifies cancel reasons and silent renewers, drafts the save, and sends after you approve. Sending included.',
   },
 };
 
