@@ -41,7 +41,7 @@ export default function Pricing() {
             Simple, transparent pricing. Sending included.
           </p>
           <p className="font-mono text-label uppercase tracking-[0.05em] text-muted-foreground">
-            Founding: 50% off 90d after first save<br/>
+            Founding: 50% off 90d after first successful send<br/>
             Annual: 2 months free · Stripe required
           </p>
         </div>
