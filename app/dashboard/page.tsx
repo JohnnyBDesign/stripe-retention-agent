@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -67,11 +67,7 @@ export default function DashboardPage() {
   const [editedBody, setEditedBody] = useState('');
   const [editedReason, setEditedReason] = useState('');
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/verify');
       const data = await response.json();
@@ -94,7 +90,11 @@ export default function DashboardPage() {
       console.error('Auth check failed:', error);
       router.push('/login');
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const fetchStripeConnection = async () => {
     try {

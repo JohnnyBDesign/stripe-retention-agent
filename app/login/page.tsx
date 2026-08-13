@@ -116,14 +116,14 @@ export default function LoginPage() {
             <>
               <h1 className="text-2xl font-semibold mb-2">Sign in with magic link</h1>
               <p className="text-sm text-muted-foreground mb-6">
-                We'll send you a link to sign in without a password
+                We&apos;ll send you a link to sign in without a password
               </p>
 
               {magicLinkSent ? (
                 <div className="space-y-4">
                   <div className="bg-muted/50 p-4 rounded-md border border-border">
                     <p className="text-sm">
-                      Check your email! If an account exists with <strong>{email}</strong>, we've sent you a magic link to sign in.
+                      Check your email! If an account exists with <strong>{email}</strong>, we&apos;ve sent you a magic link to sign in.
                     </p>
                   </div>
                   <Button
@@ -324,7 +324,7 @@ export default function LoginPage() {
                     onClick={() => setMode('signup')}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors block w-full"
                   >
-                    Don't have an account? Sign up
+                    Don&apos;t have an account? Sign up
                   </button>
                   <button
                     type="button"
