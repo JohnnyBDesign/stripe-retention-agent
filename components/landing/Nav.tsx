@@ -23,7 +23,7 @@ export default function Nav() {
               Contact
             </Link>
             <Link 
-              href="#pricing"
+              href="/scan"
               className="px-5 py-2.5 bg-white text-black text-sm font-medium rounded-pill hover:bg-white/90 transition"
             >
               See who&apos;s leaving — and why

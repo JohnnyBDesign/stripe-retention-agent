@@ -34,7 +34,7 @@ export default function Hero() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Link 
-              href="#pricing"
+              href="/scan"
               className="px-8 py-4 bg-white text-black text-base font-medium rounded-pill hover:bg-white/90 transition"
             >
               See who&apos;s leaving — and why
