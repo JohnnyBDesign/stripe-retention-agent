@@ -1,25 +1,20 @@
 'use client';
 
-import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 
 function AnimatedStat({ value, isInView }: { value: string; isInView: boolean }) {
   const numericMatch = value.match(/\d+/);
+  const targetNumber = numericMatch ? parseInt(numericMatch[0]) : 0;
+  const prefix = numericMatch ? value.substring(0, numericMatch.index) : '';
+  const suffix = numericMatch ? value.substring((numericMatch.index || 0) + numericMatch[0].length) : '';
   
-  if (!numericMatch) {
-    return <span>{value}</span>;
-  }
-
-  const targetNumber = parseInt(numericMatch[0]);
-  const prefix = value.substring(0, numericMatch.index);
-  const suffix = value.substring((numericMatch.index || 0) + numericMatch[0].length);
-
   const count = useMotionValue(0);
   const rounded = useSpring(count, { duration: 2000, bounce: 0 });
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    if (isInView) {
+    if (isInView && numericMatch) {
       count.set(targetNumber);
     }
     
@@ -28,7 +23,11 @@ function AnimatedStat({ value, isInView }: { value: string; isInView: boolean })
     });
     
     return () => unsubscribe();
-  }, [isInView, count, targetNumber, rounded]);
+  }, [isInView, count, targetNumber, rounded, numericMatch]);
+
+  if (!numericMatch) {
+    return <span>{value}</span>;
+  }
 
   return (
     <>
