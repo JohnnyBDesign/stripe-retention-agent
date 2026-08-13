@@ -33,7 +33,7 @@ export default function Pricing() {
     <section className="relative py-20 px-6 md:px-8" id="pricing">
       <div className="mx-auto max-w-content relative z-10">
         <div className="mb-16">
-          <h2 className="font-body text-display-lg text-text-display mb-6 font-light">
+          <h2 className="font-display text-display-lg text-text-display mb-6 font-medium">
             Pricing
           </h2>
           <p className="font-body text-subheading text-text-secondary mb-4 max-w-2xl">

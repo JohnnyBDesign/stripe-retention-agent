@@ -28,7 +28,7 @@ export default function HowItWorks() {
     <section className="relative py-20 px-6 md:px-8" id="how">
       <div className="mx-auto max-w-content">
         <div className="mb-16">
-          <h2 className="font-body text-display-md text-text-display mb-4 font-light">
+          <h2 className="font-display text-display-md text-text-display mb-4 font-medium">
             How it works
           </h2>
           <p className="font-body text-subheading text-text-secondary">

@@ -7,7 +7,7 @@ export default function FinalCta() {
     <section className="relative py-20 px-6 md:px-8" id="founding">
       <div className="mx-auto max-w-content">
         <Card className="p-12 md:p-16 bg-surface border-border-visible text-center">
-          <h2 className="font-body text-display-md text-text-display mb-6 font-light">
+          <h2 className="font-display text-display-md text-text-display mb-6 font-medium">
             See why they cancel, approve the save
           </h2>
           <p className="font-body text-subheading text-text-secondary mb-10 max-w-2xl mx-auto">

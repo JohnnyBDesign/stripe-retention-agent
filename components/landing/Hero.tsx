@@ -15,8 +15,8 @@ export default function Hero() {
             For SaaS founders on Stripe Billing
           </Badge>
 
-          {/* H1 - Large, asymmetric, left-aligned */}
-          <h1 className="font-body text-display-xl md:text-[96px] md:leading-[0.95] font-light text-text-display mb-8 tracking-tight">
+          {/* H1 - Large, asymmetric, left-aligned with Doto display font */}
+          <h1 className="font-display text-display-xl md:text-[96px] md:leading-[0.95] font-medium text-text-display mb-8 tracking-tight">
             Know why they cancel — before they disappear.
           </h1>
 
