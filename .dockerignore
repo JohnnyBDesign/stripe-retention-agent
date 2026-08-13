@@ -1,0 +1,32 @@
+# TypeScript build artifacts
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Dependencies
+node_modules
+
+# Next.js
+.next
+out
+
+# Git
+.git
+
+# Environment variables
+.env
+.env*.local
+
+# Testing
+coverage
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
