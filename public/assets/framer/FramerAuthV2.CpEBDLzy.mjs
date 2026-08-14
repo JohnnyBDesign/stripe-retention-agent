@@ -1,4 +1,11 @@
 // Stub file for FramerAuthV2 - auth not needed for Signal MVP
-export const a = null;
+// Based on real exports from framerusercontent.com but stubbed to no-op
+
+// `a` is the initialization function - returns undefined (no-op)
+export const a = () => {};
+
+// `i` is track/event function - no-op
 export const i = () => {};
-export const r = null;
+
+// `r` is redirect/auth action function - no-op
+export const r = () => {};
